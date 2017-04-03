@@ -11,7 +11,7 @@ defmodule Web.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Starts a worker by calling: Web.Worker.start_link(arg1, arg2, arg3)
-      # worker(Web.Worker, [arg1, arg2, arg3]),
+      worker(Web.Tcp, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
