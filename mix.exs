@@ -30,7 +30,8 @@ defmodule Web.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ranch, "~> 1.3"}
+      {:ranch, "~> 1.3"},
+      {:poison, "~> 3.0"}
     ]
   end
 end

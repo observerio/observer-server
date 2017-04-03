@@ -1,8 +1,10 @@
 defmodule Web.Tcp do
   @port 6667
+  @acceptors_size 100
+
   def start_link do
     opts = [port: @port]
-    {:ok, _} = :ranch.start_listener(:tcp, 100, :ranch_tcp, opts, Web.Tcp.Handler, [])
+    {:ok, _} = :ranch.start_listener(:tcp, @acceptors_size, :ranch_tcp, opts, Web.Tcp.Handler, [])
   end
 end
 
@@ -26,6 +28,7 @@ defmodule Web.Tcp.Handler do
     case transport.recv(socket, 0, 5000) do
       {:ok, data} ->
         case data |> String.strip |> Web.Tcp.Protocol.process do
+          {:reply, message} -> transport.send(socket, message)
           :error -> Logger.error("error on processing: #{inspect(data)}")
           _ ->
         end
@@ -39,6 +42,8 @@ end
 defmodule Web.Tcp.Protocol do
   require Logger
 
+  alias Web.Gateway
+
   @moduledoc """
     Server messages:
 
@@ -48,12 +53,27 @@ defmodule Web.Tcp.Protocol do
       - `i:api_key:vars`
         vars - should come as json dictionary and encoded by base64
 
+      - `v:api_key`
+        api_key - should verify key using our registry
+
     Client messages:
-  `
+      - `i:s:name:value` - var set by name value inside of app
   """
   def process("l:" <> <<api_key :: size(64) >> <> ":" <> logs) do
-    Logger.info("api_key: #{inspect(api_key)}, logs: #{inspect(logs)}")
+    Logger.debug("[protocol] api_key: #{inspect(api_key)}, logs: #{inspect(logs)}")
+    Gateway.logs(api_key, logs)
     :ok
+  end
+
+  def process("i:" <> <<api_key :: size(64) >> <> ":" <> vars) do
+    Logger.debug("[protocol] api_key: #{inspect(api_key)}, vars: #{inspect(vars)}")
+    Gateway.vars(api_key, vars)
+    :ok
+  end
+
+  def process("v:" <> <<api_key :: size(64)>>) do
+    # search inside of database mention for api_key
+    {:reply, "OK"}
   end
 
   def process(_), do: :error
