@@ -1,18 +1,9 @@
 defmodule Web do
   @moduledoc """
-  Documentation for Web.
+  Starts tcp server and web api for showing the progress in real time in
+  dashboard
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Web.hello
-      :world
-
   """
-  def hello do
-    :world
-  end
 end
