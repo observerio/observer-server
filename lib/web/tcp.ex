@@ -38,10 +38,14 @@ defmodule Web.Tcp.Handler do
             case Registry.register(Registry.Sockets, api_key, socket) do
               {:error, {:already_registered, _pid}} ->
                 Registry.update_value(Registry.Sockets, api_key, fn (_) -> socket end)
-              {:error, reason} -> Logger.error(reason)
+              {:error, reason} -> Logger.error(inspect(reason))
               _ ->
             end
-            transport.send(socket, "OK")
+
+            case transport.send(socket, "OK") do
+              {:error, reason} -> Logger.error(inspect(reason))
+              _ ->
+            end
           :error -> Logger.error("error on processing: #{inspect(data)}")
           _ ->
         end
