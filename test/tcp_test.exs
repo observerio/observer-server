@@ -6,6 +6,8 @@ defmodule Web.TcpTest do
 
   require RedisPoolex
   require Logger
+  require Poison
+  require Tirexs.Query
 
   setup do
     RedisPoolex.query(["FLUSHDB"])
@@ -23,5 +25,16 @@ defmodule Web.TcpTest do
     :ok = :gen_tcp.send(socket, "v:" <> api_key)
     {:ok, reply} = :gen_tcp.recv(socket, 0, 1000)
     assert reply == 'OK'
+  end
+
+  test "should bulk insert logs on tcp request", %{socket: socket, api_key: api_key} do
+    :ok = :gen_tcp.send(socket, "v:" <> api_key)
+
+    logs = "l:" <> api_key <> ":" <> ([%{message: "testing1", timestamp: 123123123}, %{message: "testing2", timestamp: 123123123}] |> Poison.encode! |> Base.encode64)
+    Logger.debug("[test] logs: #{inspect(logs)}")
+    :ok = :gen_tcp.send(socket, logs)
+
+    {:ok, response} = Tirexs.Query.create_resource([index: "logs-#{api_key}", search: []])
+    Logger.debug(inspect(response))
   end
 end

@@ -11,7 +11,7 @@ defmodule Web.Db.Users do
   def register(%{email: nil, password: _password}), do: {:error, :missing_email}
   def register(%{email: _email, password: nil}), do: {:error, :missing_password}
   def register(%{email: email, password: password}) do
-    api_key = SecureRandom.base64(8)
+    api_key = SecureRandom.hex(6)
     Redis.query_pipe([
       ["hmset", api_key,
        "email", email,

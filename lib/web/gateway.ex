@@ -1,4 +1,4 @@
-defmodule Web.Gateway.Supervisor do
+defmodule Web.Gateway do
   # TODO: should receive message from tcp listeners
   #
   # - storage:
@@ -10,6 +10,15 @@ defmodule Web.Gateway.Supervisor do
   #   update client UI
   #
 
-  def logs(api_key, logs) do
+  import Tirexs.Bulk
+
+  require Logger
+
+  def logs(logs, api_key) do
+    payload = bulk([index: "logs-#{api_key}", type: "Log"]) do
+      index [logs]
+    end
+
+    Tirexs.bump!(payload)._bulk()
   end
 end

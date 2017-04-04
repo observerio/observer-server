@@ -64,6 +64,9 @@ defmodule Web.Tcp.Protocol do
   alias Web.Gateway
   alias Web.Db.Users
 
+  # TODO: use Task.async instead of running in the same time as part of socket
+  # handler because of possible issues, it would be better to have wrapper.
+
   @moduledoc """
     Server messages:
 
@@ -79,7 +82,7 @@ defmodule Web.Tcp.Protocol do
     Client messages:
       - `i:s:name:value` - var set by name value inside of app
   """
-  def process("l:" <> <<api_key :: bytes-size(8)>> <> ":" <> logs) do
+  def process("l:" <> <<api_key :: bytes-size(12)>> <> ":" <> logs) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, logs: #{inspect(logs)}")
     logs
     |> Base.decode64!
@@ -88,7 +91,7 @@ defmodule Web.Tcp.Protocol do
     :ok
   end
 
-  def process("i:" <> <<api_key :: bytes-size(8)>> <> ":" <> vars) do
+  def process("i:" <> <<api_key :: bytes-size(12)>> <> ":" <> vars) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, vars: #{inspect(vars)}")
     vars
     |> Base.decode64!
@@ -97,14 +100,11 @@ defmodule Web.Tcp.Protocol do
     :ok
   end
 
-  def process("v:" <> <<api_key :: bytes-size(8)>>) do
-    # search inside of database mention for api_key
-    # REGISTER socket in registory by api_key
-    Logger.debug("[protocol] api_key: #{inspect(api_key)}")
+  def process("v:" <> <<api_key :: bytes-size(12)>>) do
     if Users.verify_key(api_key) do
       {:verified, api_key}
     else
-      {:error, "not registered user"}
+      {:error, "not registered user with api_key: #{inspect(api_key)}"}
     end
   end
 
