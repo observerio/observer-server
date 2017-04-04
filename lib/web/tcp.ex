@@ -34,7 +34,7 @@ defmodule Web.Tcp.Handler do
     case transport.recv(socket, 0, 5000) do
       {:ok, data} ->
         case data |> String.strip |> Web.Tcp.Protocol.process do
-          {:reg, api_key} ->
+          {:verified, api_key} ->
             case Registry.register(Registry.Sockets, api_key, socket) do
               {:error, {:already_registered, _pid}} ->
                 Registry.update_value(Registry.Sockets, api_key, fn (_) -> socket end)
@@ -46,6 +46,7 @@ defmodule Web.Tcp.Handler do
               {:error, reason} -> Logger.error(inspect(reason))
               _ ->
             end
+          {:error, reason} -> Logger.error("[tcp] #{inspect(reason)}")
           :error -> Logger.error("error on processing: #{inspect(data)}")
           _ ->
         end
@@ -61,6 +62,7 @@ defmodule Web.Tcp.Protocol do
   require Poison
 
   alias Web.Gateway
+  alias Web.Db.Users
 
   @moduledoc """
     Server messages:
@@ -99,9 +101,10 @@ defmodule Web.Tcp.Protocol do
     # search inside of database mention for api_key
     # REGISTER socket in registory by api_key
     Logger.debug("[protocol] api_key: #{inspect(api_key)}")
-    case Users.verify_key(api_key) do
-      {:error, _reason} = error -> error
-      :ok -> {:reg, api_key}
+    if Users.verify_key(api_key) do
+      {:verified, api_key}
+    else
+      {:error, "not registered user"}
     end
   end
 
