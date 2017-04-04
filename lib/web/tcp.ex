@@ -58,6 +58,7 @@ end
 
 defmodule Web.Tcp.Protocol do
   require Logger
+  require Poison
 
   alias Web.Gateway
 
@@ -78,13 +79,19 @@ defmodule Web.Tcp.Protocol do
   """
   def process("l:" <> <<api_key :: bytes-size(8)>> <> ":" <> logs) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, logs: #{inspect(logs)}")
-    Gateway.logs(api_key, logs)
+    logs
+    |> Base.decode64!
+    |> Poison.decode!
+    |> Gateway.logs(api_key)
     :ok
   end
 
   def process("i:" <> <<api_key :: bytes-size(8)>> <> ":" <> vars) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, vars: #{inspect(vars)}")
-    Gateway.vars(api_key, vars)
+    vars
+    |> Base.decode64!
+    |> Poison.decode!
+    |> Gateway.vars(api_key)
     :ok
   end
 
@@ -92,7 +99,10 @@ defmodule Web.Tcp.Protocol do
     # search inside of database mention for api_key
     # REGISTER socket in registory by api_key
     Logger.debug("[protocol] api_key: #{inspect(api_key)}")
-    {:reg, api_key}
+    case Users.verify_key(api_key) do
+      {:error, _reason} = error -> error
+      :ok -> {:reg, api_key}
+    end
   end
 
   def process(_), do: :error

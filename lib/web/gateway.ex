@@ -8,4 +8,8 @@ defmodule Web.Gateway.Supervisor do
   # - web:
   #   - should notify listeners about changed data there and we should
   #   update client UI
+  #
+
+  def logs(api_key, logs) do
+  end
 end
