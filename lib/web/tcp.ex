@@ -1,18 +1,24 @@
 defmodule Web.Tcp do
-  @port 6667
-  @acceptors_size 100
+  require Logger
 
   def start_link do
-    opts = [port: @port]
-    {:ok, _} = :ranch.start_listener(:tcp, @acceptors_size, :ranch_tcp, opts, Web.Tcp.Handler, [])
+    Logger.info("[tcp] starting server on port :#{_port()}")
+    opts = [port: _port()]
+    {:ok, _} = :ranch.start_listener(:tcp, _acceptors_size(), :ranch_tcp,
+                                     opts, Web.Tcp.Handler, [])
+  end
+
+  def _port do
+    Application.get_env(:web, :port)
+  end
+
+  def _acceptors_size do
+    Application.get_env(:web, :acceptors_size)
   end
 end
 
 defmodule Web.Tcp.Handler do
   require Logger
-
-  @moduledoc """
-  """
 
   def start_link(ref, socket, transport, opts) do
     pid = spawn_link(__MODULE__, :init, [ref, socket, transport, opts])
@@ -28,7 +34,14 @@ defmodule Web.Tcp.Handler do
     case transport.recv(socket, 0, 5000) do
       {:ok, data} ->
         case data |> String.strip |> Web.Tcp.Protocol.process do
-          {:reply, message} -> transport.send(socket, message)
+          {:reg, api_key} ->
+            case Registry.register(Registry.Sockets, api_key, socket) do
+              {:error, {:already_registered, _pid}} ->
+                Registry.update_value(Registry.Sockets, api_key, fn (_) -> socket end)
+              {:error, reason} -> Logger.error(reason)
+              _ ->
+            end
+            transport.send(socket, "OK")
           :error -> Logger.error("error on processing: #{inspect(data)}")
           _ ->
         end
@@ -47,10 +60,10 @@ defmodule Web.Tcp.Protocol do
   @moduledoc """
     Server messages:
 
-      - `l:api_key:logs`
+      - `l:logs`
         logs - should come as json array and encoded base64
 
-      - `i:api_key:vars`
+      - `i:vars`
         vars - should come as json dictionary and encoded by base64
 
       - `v:api_key`
@@ -59,21 +72,23 @@ defmodule Web.Tcp.Protocol do
     Client messages:
       - `i:s:name:value` - var set by name value inside of app
   """
-  def process("l:" <> <<api_key :: size(64) >> <> ":" <> logs) do
+  def process("l:" <> <<api_key :: bytes-size(8)>> <> ":" <> logs) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, logs: #{inspect(logs)}")
     Gateway.logs(api_key, logs)
     :ok
   end
 
-  def process("i:" <> <<api_key :: size(64) >> <> ":" <> vars) do
+  def process("i:" <> <<api_key :: bytes-size(8)>> <> ":" <> vars) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, vars: #{inspect(vars)}")
     Gateway.vars(api_key, vars)
     :ok
   end
 
-  def process("v:" <> <<api_key :: size(64)>>) do
+  def process("v:" <> <<api_key :: bytes-size(8)>>) do
     # search inside of database mention for api_key
-    {:reply, "OK"}
+    # REGISTER socket in registory by api_key
+    Logger.debug("[protocol] api_key: #{inspect(api_key)}")
+    {:reg, api_key}
   end
 
   def process(_), do: :error
