@@ -2,7 +2,6 @@ defmodule Web.Gateway do
   # TODO: should receive message from tcp listeners
   #
   # - storage:
-  #   - store logs
   #   - store variables
   #
   # - web:
@@ -15,10 +14,19 @@ defmodule Web.Gateway do
   require Logger
 
   def logs(logs, api_key) do
-    payload = bulk([index: "logs-#{api_key}", type: "Log"]) do
-      index [logs]
+    data = logs |> Enum.map(&Map.to_list(&1))
+
+    payload = bulk do
+      index [index: "logs-#{api_key}", type: "Log"], data
     end
 
-    Tirexs.bump!(payload)._bulk()
+    {:ok, 200, response} = Tirexs.bump!(payload)._bulk()
+
+    Logger.debug("[gateway] elastic response: #{inspect(response)}")
+
+    :ok
+  end
+
+  def vars(vars, api_key) do
   end
 end

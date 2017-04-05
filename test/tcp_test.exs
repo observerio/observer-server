@@ -29,12 +29,11 @@ defmodule Web.TcpTest do
 
   test "should bulk insert logs on tcp request", %{socket: socket, api_key: api_key} do
     :ok = :gen_tcp.send(socket, "v:" <> api_key)
+    :ok = :gen_tcp.send(socket, "l:" <> api_key <> ":" <> ([%{message: "testing1", timestamp: 123123123}, %{message: "testing2", timestamp: 123123123}] |> Poison.encode! |> Base.encode64))
 
-    logs = "l:" <> api_key <> ":" <> ([%{message: "testing1", timestamp: 123123123}, %{message: "testing2", timestamp: 123123123}] |> Poison.encode! |> Base.encode64)
-    Logger.debug("[test] logs: #{inspect(logs)}")
-    :ok = :gen_tcp.send(socket, logs)
+    :timer.sleep(2000)
 
-    {:ok, response} = Tirexs.Query.create_resource([index: "logs-#{api_key}", search: []])
-    Logger.debug(inspect(response))
+    assert {:ok, 200, %{hits: %{hits: hits}} = response} = Tirexs.Query.create_resource([index: "logs-#{api_key}", search: ""])
+    assert Enum.count(hits) == 2
   end
 end
