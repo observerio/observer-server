@@ -13,6 +13,8 @@ defmodule Web.Gateway do
 
   require Logger
 
+  alias RedisPoolex, as: Redis
+
   def logs(logs, api_key) do
     data = logs |> Enum.map(&Map.to_list(&1))
 
@@ -28,5 +30,19 @@ defmodule Web.Gateway do
   end
 
   def vars(vars, api_key) do
+    vars = vars
+           |> Enum.map(fn var ->
+             var
+             |> Enum.filter(fn {k, v} -> k != "name" end)
+             |> Enum.map(fn {k, v} ->
+               ["#{var["name"]}:#{k}", v]
+             end)
+           end)
+           |> List.flatten
+
+    query = ["HMSET", "#{api_key}:vs"] ++ vars
+    Redis.query(query)
+
+    :ok
   end
 end

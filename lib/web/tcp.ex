@@ -27,32 +27,52 @@ defmodule Web.Tcp.Handler do
 
   def init(ref, socket, transport, _Opts = []) do
     :ok = :ranch.accept_ack(ref)
-    loop(socket, transport)
+    loop(socket, transport, "")
   end
 
-  def loop(socket, transport) do
+  def loop(socket, transport, acc) do
     case transport.recv(socket, 0, 5000) do
       {:ok, data} ->
-        case data |> String.strip |> Web.Tcp.Protocol.process do
-          {:verified, api_key} ->
-            case Registry.register(Registry.Sockets, api_key, socket) do
-              {:error, {:already_registered, _pid}} ->
-                Registry.update_value(Registry.Sockets, api_key, fn (_) -> socket end)
-              {:error, reason} -> Logger.error(inspect(reason))
-              _ ->
-            end
-
-            case transport.send(socket, "OK") do
-              {:error, reason} -> Logger.error(inspect(reason))
-              _ ->
-            end
-          {:error, reason} -> Logger.error("[tcp] #{inspect(reason)}")
-          :error -> Logger.error("error on processing: #{inspect(data)}")
-          _ ->
-        end
-        loop(socket, transport)
+        acc <> data
+        |> String.split("\n")
+        |> _process(socket, transport)
       _ ->
         :ok = transport.close(socket)
+    end
+  end
+
+  defp _process([], socket, transport), do: loop(socket, transport, "")
+  defp _process([""], socket, transport), do: loop(socket, transport, "")
+  defp _process([line, ""], socket, transport) do
+    _protocol(line, socket, transport)
+    loop(socket, transport, "")
+  end
+  defp _process([line], socket, transport), do: loop(socket, transport, line)
+  defp _process([line | lines], socket, transport) do
+    _protocol(line, socket, transport)
+    _process(lines, socket, transport)
+  end
+
+  defp _protocol(line, socket, transport) do
+    case line |> Web.Tcp.Protocol.process do
+      {:verified, api_key} ->
+        case Registry.register(Registry.Sockets, api_key, socket) do
+          {:error, {:already_registered, _pid}} ->
+            Registry.update_value(Registry.Sockets, api_key, fn (_) -> socket end)
+          {:error, reason} -> Logger.error(inspect(reason))
+          _ ->
+        end
+
+        case transport.send(socket, "OK") do
+          {:error, reason} ->
+            Logger.error(inspect(reason))
+          _ ->
+        end
+      {:error, reason} ->
+        Logger.error("[tcp] #{inspect(reason)}")
+      :error ->
+        Logger.error("error on processing: #{inspect(line)}")
+      _ ->
     end
   end
 end
@@ -88,7 +108,6 @@ defmodule Web.Tcp.Protocol do
     |> Base.decode64!
     |> Poison.decode!
     |> Gateway.logs(api_key)
-    :ok
   end
 
   def process("i:" <> <<api_key :: bytes-size(12)>> <> ":" <> vars) do
@@ -97,7 +116,6 @@ defmodule Web.Tcp.Protocol do
     |> Base.decode64!
     |> Poison.decode!
     |> Gateway.vars(api_key)
-    :ok
   end
 
   def process("v:" <> <<api_key :: bytes-size(12)>>) do
