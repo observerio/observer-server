@@ -1,20 +1,20 @@
 defmodule Web.Gateway do
   # TODO: should receive message from tcp listeners
   #
-  # - storage:
-  #   - store variables
-  #
   # - web:
   #   - should notify listeners about changed data there and we should
   #   update client UI
-  #
 
   import Tirexs.Bulk
 
   require Logger
 
   alias RedisPoolex, as: Redis
+  alias Web.Pubsub
 
+  @doc """
+  Store logs in Elasticsearch server and notify subscribers about the updates
+  """
   def logs(logs, api_key) do
     data = logs |> Enum.map(&Map.to_list(&1))
 
@@ -26,9 +26,19 @@ defmodule Web.Gateway do
 
     Logger.debug("[gateway] elastic response: #{inspect(response)}")
 
+    Pubsub.publish("#{api_key}:logs", logs)
+
     :ok
   end
 
+  @doc """
+  Store variables in Redis server and notify subscribers about the updates
+
+  Example:
+    <api_key>:vs
+      - <varname>:type = string
+      - <varname>:value = "testing"
+  """
   def vars(vars, api_key) do
     vars = vars
            |> Enum.map(fn var ->
@@ -42,6 +52,8 @@ defmodule Web.Gateway do
 
     query = ["HMSET", "#{api_key}:vs"] ++ vars
     Redis.query(query)
+
+    Pubsub.publish("#{api_key}:vars", vars)
 
     :ok
   end

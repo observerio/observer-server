@@ -31,6 +31,8 @@ defmodule Web.Mixfile do
   defp deps do
     [
       {:ranch, "~> 1.3"},
+      {:gproc, "~> 0.6.1"},
+      {:web_socket, "~> 0.1.0"},
       {:poison, "~> 3.0"},
       {:tirexs, "~> 0.8"},
       {:secure_random, "~> 0.5"},
