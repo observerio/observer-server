@@ -21,7 +21,7 @@ defmodule Web.Handlers.Dashboard do
   end
 
   # Handle other messages from the browser - don't reply
-  def websocket_handle({:text, "initi}, req, state) do
+  def websocket_handle({:text, "initialize"}, req, state) do
     Pubsub.subscribe("#{api_key}:vars")
     Pubsub.subscribe("#{api_key}:logs")
 
