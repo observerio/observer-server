@@ -20,6 +20,14 @@ end
 defmodule Web.Tcp.Handler do
   require Logger
 
+  @moduledoc """
+  `Handler` is wainting lines separated by \n new line, in case if handler don't
+  see new line it starts to accumulate data until it receives new line.
+
+  `Registry.Sockets` contains api_key -> socket records for easy back communication
+  from dashboard page to tcp clients.
+  """
+
   def start_link(ref, socket, transport, opts) do
     pid = spawn_link(__MODULE__, :init, [ref, socket, transport, opts])
     {:ok, pid}
