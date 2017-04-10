@@ -3,6 +3,8 @@ defmodule Web.Handlers.Dashboard do
 
   alias Web.Pubsub
 
+  require Logger
+
   def init(_, _req, _opts) do
     {:upgrade, :protocol, :cowboy_websocket}
   end
@@ -25,14 +27,12 @@ defmodule Web.Handlers.Dashboard do
     Pubsub.subscribe("#{api_key}:vars")
     Pubsub.subscribe("#{api_key}:logs")
 
-    IO.puts(inspect(state))
+    Logger.debug("==============")
+    Logger.debug(inspect(req))
+    Logger.debug(inspect(state))
+    Logger.debug("==============")
 
     {:ok, req, state}
-  end
-
-  # Format and forward elixir messages to client
-  def websocket_info(message, req, state) do
-    {:reply, {:text, message}, req, state}
   end
 
   # No matter why we terminate, remove all of this pids subscriptions
