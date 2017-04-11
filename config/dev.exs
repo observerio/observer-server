@@ -1,6 +1,7 @@
 use Mix.Config
 
-config :web, :port, 6667
+config :web, :tcp_port, 6667
+config :web, :web_port, 8080
 config :web, :acceptors_size, 100
 
 config :redis_poolex,

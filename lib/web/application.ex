@@ -13,8 +13,8 @@ defmodule Web.Application do
       # Starts a worker by calling: Web.Worker.start_link(arg1, arg2, arg3)
       worker(Web.Tcp, []),
       supervisor(Registry, [:unique, Registry.Sockets]),
-      Plug.Adapters.Cowboy.child_spec(:http, Web.Router, [l, [
-                                      port: 8080,
+      Plug.Adapters.Cowboy.child_spec(:http, Web.Router, [], [
+                                      port: Application.get_env(:web, :web_port),
                                       dispatch: dispatch
                                     ])
     ]

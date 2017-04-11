@@ -9,7 +9,7 @@ defmodule Web.Tcp do
   end
 
   def _port do
-    Application.get_env(:web, :port)
+    Application.get_env(:web, :tcp_port)
   end
 
   def _acceptors_size do
@@ -43,6 +43,7 @@ defmodule Web.Tcp.Handler do
       {:ok, data} ->
         acc <> data
         |> String.split("\n")
+        |> Enum.map(&(String.trim(&1)))
         |> _process(socket, transport)
       _ ->
         :ok = transport.close(socket)
@@ -62,6 +63,8 @@ defmodule Web.Tcp.Handler do
   end
 
   defp _protocol(line, socket, transport) do
+    Logger.debug("[_protocol] line: #{line}")
+
     case line |> Web.Tcp.Protocol.process do
       {:verified, api_key} ->
         case Registry.register(Registry.Sockets, api_key, socket) do
@@ -92,9 +95,6 @@ defmodule Web.Tcp.Protocol do
   alias Web.Gateway
   alias Web.Db.Users
 
-  # TODO: use Task.async instead of running in the same time as part of socket
-  # handler because of possible issues, it would be better to have wrapper.
-
   @moduledoc """
     Server messages:
 
@@ -110,7 +110,7 @@ defmodule Web.Tcp.Protocol do
     Client messages:
       - `i:s:name:value` - var set by name value inside of app
   """
-  def process("l:" <> <<api_key :: bytes-size(12)>> <> ":" <> logs) do
+  def process("l:" <> <<api_key :: bytes-size(12)>> <> ":" <> logs = line) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, logs: #{inspect(logs)}")
     logs
     |> Base.decode64!
@@ -118,7 +118,7 @@ defmodule Web.Tcp.Protocol do
     |> Gateway.logs(api_key)
   end
 
-  def process("i:" <> <<api_key :: bytes-size(12)>> <> ":" <> vars) do
+  def process("i:" <> <<api_key :: bytes-size(12)>> <> ":" <> vars = line) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, vars: #{inspect(vars)}")
     vars
     |> Base.decode64!
@@ -126,7 +126,7 @@ defmodule Web.Tcp.Protocol do
     |> Gateway.vars(api_key)
   end
 
-  def process("v:" <> <<api_key :: bytes-size(12)>>) do
+  def process("v:" <> <<api_key :: bytes-size(12)>> = line) do
     if Users.verify_key(api_key) do
       {:verified, api_key}
     else

@@ -4,6 +4,7 @@ defmodule Web.Handlers.Dashboard do
   alias Web.Pubsub
 
   require Logger
+  require Poison
 
   def init(_, _req, _opts) do
     {:upgrade, :protocol, :cowboy_websocket}
@@ -17,20 +18,27 @@ defmodule Web.Handlers.Dashboard do
     {:ok, req, state, @timeout}
   end
 
+  @doc """
+  gproc should send here message on push update
+  """
+  def websocket_info(args, req, state) do
+    {:reply, {:text, inspect(args)}, req, state}
+  end
+
   # Handle 'ping' messages from the browser - reply
   def websocket_handle({:text, "ping"}, req, state) do
     {:reply, {:text, "pong"}, req, state}
   end
 
   # Handle other messages from the browser - don't reply
-  def websocket_handle({:text, "initialize"}, req, state) do
-    Pubsub.subscribe("#{api_key}:vars")
-    Pubsub.subscribe("#{api_key}:logs")
+  def websocket_handle({:text, data}, req, state) do
+    event = data |> Poison.decode!
 
-    Logger.debug("==============")
-    Logger.debug(inspect(req))
-    Logger.debug(inspect(state))
-    Logger.debug("==============")
+    Logger.debug("[websocket_handle] #{inspect(event)}")
+
+    # don't subscribe if we have it
+    Pubsub.subscribe("#{event["data"]["key"]}:vars")
+    Pubsub.subscribe("#{event["data"]["key"]}:logs")
 
     {:ok, req, state}
   end

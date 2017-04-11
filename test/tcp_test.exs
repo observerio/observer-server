@@ -16,7 +16,7 @@ defmodule Web.TcpTest do
 
     {:ok, api_key} = Users.register(%{email: "user1@example.com", password: "12345678"})
 
-    port = Application.get_env(:web, :port)
+    port = Application.get_env(:web, :tcp_port)
     host = "127.0.0.1" |> String.to_char_list
 
     {:ok, socket} = :gen_tcp.connect(host, port, [active: false])
