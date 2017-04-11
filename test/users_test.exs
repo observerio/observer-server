@@ -21,4 +21,10 @@ defmodule Web.Db.UsersTest do
     {:ok, api_key} = Users.register(%{email: email, password: password})
     assert Users.verify_key(api_key) == true
   end
+
+  test "exist? email address", %{email: email, password: password} do
+    assert Users.exists?(email) == false
+    Users.register(%{email: email, password: password})
+    assert Users.exists?(email) == true
+  end
 end

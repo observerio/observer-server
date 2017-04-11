@@ -79,7 +79,7 @@
 
         var key = "b643cfc76be5";
 
-        socket = new Socket({ uri: "ws://127.0.0.1:8080/ws" });
+        socket = new Socket({ uri: "ws://127.0.0.1:4000/ws" });
         socket.onOpen(function(event) { socket.send("init", {key: key}); });
         socket.onMessage(function(event) { console.log(event); });
         socket.onError(function(event) {  console.error(event); });

@@ -13,7 +13,7 @@ defmodule Web.Tcp do
   end
 
   def _acceptors_size do
-    Application.get_env(:web, :acceptors_size)
+    Application.get_env(:web, :tcp_acceptors_size)
   end
 end
 

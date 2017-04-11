@@ -25,26 +25,21 @@ defmodule Web.Handlers.Dashboard do
     {:reply, {:text, inspect(args)}, req, state}
   end
 
-  # Handle 'ping' messages from the browser - reply
-  def websocket_handle({:text, "ping"}, req, state) do
-    {:reply, {:text, "pong"}, req, state}
-  end
-
   # Handle other messages from the browser - don't reply
   def websocket_handle({:text, data}, req, state) do
-    event = data |> Poison.decode!
-
-    Logger.debug("[websocket_handle] #{inspect(event)}")
-
-    # don't subscribe if we have it
-    Pubsub.subscribe("#{event["data"]["key"]}:vars")
-    Pubsub.subscribe("#{event["data"]["key"]}:logs")
-
-    {:ok, req, state}
+    data |> Poison.decode! |> _process(req, state)
   end
 
   # No matter why we terminate, remove all of this pids subscriptions
   def websocket_terminate(_reason, _req, _state) do
     :ok
   end
+
+  defp _process(%{"event" => "init", "data" => %{"key" => key}}, req, state) do
+    Pubsub.subscribe("#{key}:vars")
+    Pubsub.subscribe("#{key}:logs")
+
+    {:ok, req, state}
+  end
+
 end

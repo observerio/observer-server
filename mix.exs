@@ -37,6 +37,7 @@ defmodule Web.Mixfile do
       {:tirexs, "~> 0.8"},
       {:secure_random, "~> 0.5"},
       {:comeonin, "~> 3.0"},
+      {:maru, "~> 0.11"},
       {:redis_poolex, github: "oivoodoo/redis_poolex"},
     ]
   end
