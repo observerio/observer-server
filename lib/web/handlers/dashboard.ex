@@ -10,7 +10,7 @@ defmodule Web.Handlers.Dashboard do
     {:upgrade, :protocol, :cowboy_websocket}
   end
 
-  @timeout 60000 # terminate if no activity for one minute
+  @timeout 60_000 # terminate if no activity for one minute
 
   #Called on websocket connection initialization.
   def websocket_init(_type, req, _opts) do

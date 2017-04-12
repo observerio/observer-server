@@ -33,7 +33,7 @@ defmodule Web.Tcp.Handler do
     {:ok, pid}
   end
 
-  def init(ref, socket, transport, _Opts = []) do
+  def init(ref, socket, transport, _opts = []) do
     :ok = :ranch.accept_ack(ref)
     loop(socket, transport, "")
   end
@@ -67,12 +67,7 @@ defmodule Web.Tcp.Handler do
 
     case line |> Web.Tcp.Protocol.process do
       {:verified, api_key} ->
-        case Registry.register(Registry.Sockets, api_key, socket) do
-          {:error, {:already_registered, _pid}} ->
-            Registry.update_value(Registry.Sockets, api_key, fn (_) -> socket end)
-          {:error, reason} -> Logger.error(inspect(reason))
-          _ ->
-        end
+        _register_socket(api_key, socket)
 
         case transport.send(socket, "OK") do
           {:error, reason} ->
@@ -83,6 +78,16 @@ defmodule Web.Tcp.Handler do
         Logger.error("[tcp] #{inspect(reason)}")
       :error ->
         Logger.error("error on processing: #{inspect(line)}")
+      _ ->
+    end
+  end
+
+  def _register_socket(api_key, socket) do
+    case Registry.register(Registry.Sockets, api_key, socket) do
+      {:error, {:already_registered, _pid}} ->
+        Registry.update_value(Registry.Sockets, api_key, fn (_) -> socket end)
+      {:error, reason} ->
+        Logger.error(inspect(reason))
       _ ->
     end
   end

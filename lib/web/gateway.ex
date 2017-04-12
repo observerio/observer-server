@@ -1,10 +1,4 @@
 defmodule Web.Gateway do
-  # TODO: should receive message from tcp listeners
-  #
-  # - web:
-  #   - should notify listeners about changed data there and we should
-  #   update client UI
-
   import Tirexs.Bulk
 
   require Logger

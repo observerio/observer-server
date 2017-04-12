@@ -9,14 +9,14 @@ defmodule Web.Api.Users do
       requires :password, type: String
     end
     post do
-      unless Users.exists?(params[:email]) do
-        {:ok, api_key} = Users.register(%{email: params[:email],
-                                          password: params[:password]})
-        json(conn, %{api_key: api_key})
-      else
+      if Users.exists?(params[:email]) do
         conn
         |> put_status(400)
         |> text("email exists")
+      else
+        {:ok, api_key} = Users.register(%{email: params[:email],
+                                          password: params[:password]})
+        json(conn, %{api_key: api_key})
       end
     end
   end

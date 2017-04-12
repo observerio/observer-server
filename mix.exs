@@ -39,6 +39,7 @@ defmodule Web.Mixfile do
       {:comeonin, "~> 3.0"},
       {:maru, "~> 0.11"},
       {:redis_poolex, github: "oivoodoo/redis_poolex"},
+      {:credo, "~> 0.7", only: [:dev, :test]},
     ]
   end
 end
