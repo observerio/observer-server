@@ -14,7 +14,7 @@ defmodule Web.Handlers.Dashboard do
 
   #Called on websocket connection initialization.
   def websocket_init(_type, req, _opts) do
-    state = %{}
+    state = %{keys: []}
     {:ok, req, state, @timeout}
   end
 
@@ -31,15 +31,19 @@ defmodule Web.Handlers.Dashboard do
   end
 
   # No matter why we terminate, remove all of this pids subscriptions
-  def websocket_terminate(_reason, _req, _state) do
+  def websocket_terminate(_reason, _req, state) do
+    Logger.info(inspect(state))
     :ok
   end
 
   defp _process(%{"event" => "init", "data" => %{"key" => key}}, req, state) do
+    # TODO: do reconnect from client by using init event, websocket should ping
+    # the handlers
     Pubsub.subscribe("#{key}:vars")
     Pubsub.subscribe("#{key}:logs")
 
+    state = %{keys: state[:keys] ++ key}
+
     {:ok, req, state}
   end
-
 end

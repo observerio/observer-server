@@ -1,6 +1,6 @@
 #!/bin/sh
 
-KEY=b643cfc76be5
+KEY=a643cfc76be5
 
 redis-cli SET $KEY 1
 
