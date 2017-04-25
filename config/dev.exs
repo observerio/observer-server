@@ -13,6 +13,6 @@ config :redis_poolex,
   max_queue: :infinity,
   pool_size: 10,
   pool_max_overflow: 1,
-  connection_string: "redis://127.0.0.1:6379/"
+  connection_string: "redis://observer_redis:6379/"
 
-config :tirexs, :uri, "http://127.0.0.1:9200"
+config :tirexs, :uri, "http://observer_elasticsearch:9200"

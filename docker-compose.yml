@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  elasticsearch:
+    image: elasticsearch:latest
+    container_name: observer_elasticsearch
+    ports: ["9200"]
+    networks:
+      - back-tier
+
+  redis:
+    image: redis:alpine
+    container_name: observer_redis
+    ports: ["6379"]
+    networks:
+      - back-tier
+
+  observer:
+    build: ./
+    volumes:
+      - ./:/app
+    dns:
+      - "8.8.8.8"
+    networks:
+      - back-tier
+    ports:
+      - "8080:8080"
+    tty: true
+    depends_on:
+      - redis
+      - elasticsearch
+    links:
+      - redis
+      - elasticsearch
+    command: iex -S mix
+
+volumes:
+  db-data:
+
+networks:
+  back-tier:

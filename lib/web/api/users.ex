@@ -14,9 +14,12 @@ defmodule Web.Api.Users do
         |> put_status(400)
         |> text("email exists")
       else
+        # TODO: add auth_key using JWT.io
+        #
         {:ok, api_key} = Users.register(%{email: params[:email],
                                           password: params[:password]})
-        json(conn, %{api_key: api_key})
+
+        json(conn, %{auth_key: api_key})
       end
     end
   end
