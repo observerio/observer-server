@@ -1,5 +1,5 @@
 NAME = observer
-SERVERS = 162.243.84.159 146.185.146.193 159.203.60.44
+SERVERS = 162.243.84.159
 
 build: stop
 	docker-compose up -d

@@ -14,9 +14,10 @@ defmodule Web.Application do
       worker(Web.Tcp, []),
       supervisor(Registry, [:unique, Registry.Sockets]),
       Plug.Adapters.Cowboy.child_spec(:http, __MODULE__, [], [
-                                      port: Application.get_env(:web, :ws_port),
-                                      dispatch: dispatch
-                                    ])
+                                        ip: Application.get_env(:web, :ws_host),
+                                        port: Application.get_env(:web, :ws_port),
+                                        dispatch: dispatch
+                                      ])
     ]
 
 

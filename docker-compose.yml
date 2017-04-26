@@ -4,14 +4,16 @@ services:
   elasticsearch:
     image: elasticsearch:latest
     container_name: observer_elasticsearch
-    ports: ["9200"]
+    ports:
+      - 9200
     networks:
       - back-tier
 
   redis:
     image: redis:alpine
     container_name: observer_redis
-    ports: ["6379"]
+    ports:
+      - 6379
     networks:
       - back-tier
 
@@ -32,7 +34,24 @@ services:
     links:
       - redis
       - elasticsearch
-    command: iex -S mix
+    command: /bin/sh make.sh server
+
+  simulate:
+    build: ./
+    volumes:
+      - ./:/app
+    environment:
+      TCP_HOST: observer
+    dns:
+      - "8.8.8.8"
+    networks:
+      - back-tier
+    depends_on:
+      - observer
+    tty: true
+    links:
+      - observer
+    command: /bin/sh make.sh simulate
 
 volumes:
   db-data:
