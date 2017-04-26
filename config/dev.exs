@@ -16,4 +16,4 @@ config :redis_poolex,
   pool_max_overflow: 1,
   connection_string: "redis://observer_redis:6379/"
 
-config :tirexs, :uri, "http://observer_elasticsearch:9200"
+config :tirexs, :uri, "http://elastic:changeme@observer_elasticsearch:9200"
