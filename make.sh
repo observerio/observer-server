@@ -16,7 +16,7 @@ server() {
 }
 
 simulate() {
-  /bin/sh tcp.sh
+  /bin/sh scripts/simulate.sh
 }
 
 case $COMMAND in

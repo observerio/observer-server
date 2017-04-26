@@ -1,0 +1,31 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "history": "^4.6.1",
+    "prop-types": "^15.5.8",
+    "react": "^15.5.3",
+    "react-dom": "^15.5.3",
+    "react-router": "^4.1.0",
+    "react-router-dom": "^4.1.0",
+    "react-tap-event-plugin": "^2.0.1",
+    "recharts": "^0.22.1"
+  },
+  "devDependencies": {
+    "node-sass": "^4.5.2",
+    "npm-run-all": "^4.0.2",
+    "react-scripts": "0.9.5"
+  },
+  "scripts": {
+    "build-css": "node-sass src/ -o src/",
+    "watch-css": "npm run build-css && node-sass src/ -o src/ --watch --recursive",
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
+    "build": "npm run build-css && react-scripts build",
+     "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

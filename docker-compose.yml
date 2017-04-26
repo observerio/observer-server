@@ -2,7 +2,7 @@ version: "3"
 
 services:
   elasticsearch:
-    image: elasticsearch:latest
+    image: elasticsearch:5.3.1-alpine
     container_name: observer_elasticsearch
     ports:
       - 9200
@@ -26,7 +26,7 @@ services:
     networks:
       - back-tier
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     tty: true
     depends_on:
       - redis
@@ -52,6 +52,23 @@ services:
     links:
       - observer
     command: /bin/sh make.sh simulate
+
+  web:
+    build: ./web/
+    volumes:
+      - ./web:/app
+    dns:
+      - "8.8.8.8"
+    networks:
+      - back-tier
+    depends_on:
+      - observer
+    tty: true
+    ports:
+      - "127.0.0.1:5001:5001"
+    links:
+      - observer
+    command: yarn start
 
 volumes:
   db-data:

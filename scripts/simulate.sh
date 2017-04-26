@@ -4,8 +4,8 @@ TCP_HOST=${TCP_HOST:-localhost}
 TCP_PORT=6667
 WEB_PORT=8080
 
-SLEEP_TIME=5
-COMMAND_SLEEP_TIME=1
+SLEEP_TIME=10
+COMMAND_SLEEP_TIME=2
 
 KEY=`curl -H "Content-Type: application/json" -X POST "http://$TCP_HOST:8080/users" -d '{"email":"admin@example.com","password":"123456"}' | jq -r ".auth_key"`
 

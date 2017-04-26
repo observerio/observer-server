@@ -1,15 +1,12 @@
-FROM elixir:latest
+FROM bitwalker/alpine-elixir:1.4.2
 
-WORKDIR /app
-
-RUN apt-get update
-RUN apt-get install -y tmux jq telnet
-
-ADD http://s3.amazonaws.com/s3.hex.pm/installs/1.1.0/hex-0.15.0.ez /tmp/
-RUN mix archive.install --force /tmp/hex-0.15.0.ez
-
-RUN mix local.hex --force
+RUN apk update \
+ && apk add jq \
+ && apk add putty \
+ && rm -rf /var/cache/apk/*
 
 EXPOSE 8080
 EXPOSE 4000
 EXPOSE 6667
+
+WORKDIR /app

@@ -1,6 +1,17 @@
+# Dev
+
+`make build` - run required containers and simulation traffic
+
 # Web
 
 TCP server should receive message using binary protocol.
+
+TODO: Add webpack env.js config build too use environment variables
+to setup host:port and other possibles options.
+
+DEV PORT: WEB=8080, SOCKET=4000
+
+TODO: use http://127.0.0.1:8080/
 
 
 # TODO:

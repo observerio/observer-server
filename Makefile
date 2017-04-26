@@ -2,7 +2,7 @@ NAME = observer
 SERVERS = 162.243.84.159
 
 build: stop
-	docker-compose up -d
+	docker-compose build && docker-compose up -d
 .PHONY: build
 
 deploy:
