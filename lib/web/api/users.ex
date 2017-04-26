@@ -12,7 +12,7 @@ defmodule Web.Api.Users do
       if Users.exists?(params[:email]) do
         conn
         |> put_status(400)
-        |> text("email exists")
+        |> json(%{error: "email exists"})
       else
         # TODO: add auth_key using JWT.io
         #
