@@ -12,6 +12,7 @@ defmodule Web.Router do
     parsers: [:urlencoded, :json, :multipart]
 
   mount Web.Api.Users
+  mount Web.Api.Home
 
   get "/" do
     data = "public/dist/index.html"

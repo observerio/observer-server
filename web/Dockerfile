@@ -22,6 +22,15 @@ RUN npm install --ignore-optional -g \
   pm2 \
   yarn
 
+RUN git clone https://github.com/facebook/watchman.git \
+  && cd watchman \
+  && git checkout v4.7.0 \
+  && ./autogen.sh \
+  && ./configure  \
+  && make \
+  && make install
+
 WORKDIR /app
 
-EXPOSE 5001
+EXPOSE 4200
+EXPOSE 49153

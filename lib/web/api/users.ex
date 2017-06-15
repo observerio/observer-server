@@ -9,7 +9,7 @@ defmodule Web.Api.Users do
       requires :password, type: String
     end
     post do
-      if Users.exists?(params[:email]) do
+      if Users.exists?(%{email: params[:email]}) do
         conn
         |> put_status(400)
         |> json(%{error: "email exists"})

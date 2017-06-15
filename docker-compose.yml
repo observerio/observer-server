@@ -77,9 +77,10 @@ services:
     tty: true
     ports:
       - "127.0.0.1:4200:4200"
+      - "127.0.0.1:49153:49153"
     links:
       - observer
-    command: /bin/ash -c "yarn && ./node_modules/bin/ember s"
+    command: /bin/ash -c "yarn && ./node_modules/.bin/ember s"
 
 volumes:
   db-data:
