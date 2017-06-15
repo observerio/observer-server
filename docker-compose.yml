@@ -28,7 +28,7 @@ services:
     networks:
       - back-tier
 
-  observer:
+  api:
     build: ./
     volumes:
       - ./:/app
@@ -52,35 +52,35 @@ services:
     volumes:
       - ./:/app
     environment:
-      TCP_HOST: observer
+      TCP_HOST: api
     dns:
       - "8.8.8.8"
     networks:
       - back-tier
     depends_on:
-      - observer
+      - api
     tty: true
     links:
-      - observer
+      - api
     command: /bin/sh make.sh simulate
 
-  # web:
-  #   build: ./web/
-  #   volumes:
-  #     - ./web:/app
-  #   dns:
-  #     - "8.8.8.8"
-  #   networks:
-  #     - back-tier
-  #   depends_on:
-  #     - observer
-  #   tty: true
-  #   ports:
-  #     - "127.0.0.1:4200:4200"
-  #     - "127.0.0.1:49153:49153"
-  #   links:
-  #     - observer
-  #   command: /bin/ash -c "yarn && ./node_modules/.bin/ember s"
+  web:
+    build: ./web/
+    volumes:
+      - ./web:/app
+    dns:
+      - "8.8.8.8"
+    networks:
+      - back-tier
+    depends_on:
+      - api
+    tty: true
+    ports:
+      - "127.0.0.1:4200:4200"
+      - "127.0.0.1:49153:49153"
+    links:
+      - api
+    command: /bin/ash -c "yarn && ./node_modules/.bin/ember s"
 
 volumes:
   db-data:
