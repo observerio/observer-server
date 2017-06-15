@@ -2,7 +2,7 @@ NAME = observer
 SERVERS = 162.243.84.159
 
 build: stop
-	docker-compose build && docker-compose up -d
+	docker-compose up -d
 .PHONY: build
 
 deploy:
@@ -22,9 +22,9 @@ stop:
 .PHONY: stop
 
 test:
-	docker exec -ti `docker-compose ps -q $(NAME)` /bin/bash -c "mix test $(TEST_CASE)"
+	docker exec -ti `docker-compose ps -q $(NAME)` /bin/ash -c "mix test $(TEST_CASE)"
 .PHONY: test
 
 console:
-	docker exec -ti `docker-compose ps -q $(NAME)` /bin/bash
+	docker exec -ti `docker-compose ps -q $(NAME)` /bin/ash
 .PHONY: console
