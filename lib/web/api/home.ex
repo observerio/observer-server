@@ -3,16 +3,14 @@ defmodule Web.Api.Home do
 
   use Maru.Router
 
-  alias Web.Db.Home
-
   namespace :tokens do
     get do
       api_key = SecureRandom.hex(6)
-      json(conn, %{auth_key: api_key})
+      json(conn, %{apiKey: api_key})
     end
 
     post do
-      json(conn, %{auth_key: api_key})
+      json(conn, %{status: :ok})
     end
   end
 end
