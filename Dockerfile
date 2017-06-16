@@ -4,6 +4,7 @@ RUN apk update \
  && apk add jq \
  && apk add putty \
  && apk add curl \
+ && apk add make \
  && rm -rf /var/cache/apk/*
 
 EXPOSE 8080

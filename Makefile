@@ -1,6 +1,10 @@
 NAME = observer
 SERVERS = 162.243.84.159
 
+remove: stop
+	docker-compose rm --force
+.PHONY: remove
+
 build: stop
 	docker-compose up -d
 .PHONY: build
