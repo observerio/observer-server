@@ -5,6 +5,8 @@ RUN apk update \
  && apk add putty \
  && apk add curl \
  && apk add make \
+ && apk add --update alpine-sdk \
+ && apk add erlang-dev \
  && rm -rf /var/cache/apk/*
 
 EXPOSE 8080
