@@ -18,7 +18,6 @@ defmodule Web.Router do
   end
 
   mount Web.Api.Users
-  mount Web.Api.Home
 
   get "/" do
     data = "public/dist/index.html"

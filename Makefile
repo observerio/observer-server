@@ -1,4 +1,4 @@
-NAME = observer
+NAME = api
 SERVERS = 162.243.84.159
 
 remove: stop
