@@ -21,11 +21,18 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+
+    'ember-websockets': {
+      socketIO: true
     }
   };
 
   if (environment === 'development') {
     ENV.APP.HOST = "http://localhost:8080";
+    ENV.WS = {
+        HOST: "ws://127.0.0.1:4000/ws"
+    };
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;

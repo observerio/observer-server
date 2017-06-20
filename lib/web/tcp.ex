@@ -41,6 +41,8 @@ defmodule Web.Tcp.Handler do
   def loop(socket, transport, acc) do
     case transport.recv(socket, 0, 5000) do
       {:ok, data} ->
+        Logger.info("TCP data: #{inspect(data)}")
+
         acc <> data
         |> String.split("\n")
         |> Enum.map(&(String.trim(&1)))

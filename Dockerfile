@@ -10,7 +10,12 @@ RUN apk update \
  && rm -rf /var/cache/apk/*
 
 EXPOSE 8080
+
 EXPOSE 4000
+EXPOSE 4001
+EXPOSE 4002
+
 EXPOSE 6667
+EXPOSE 6668
 
 WORKDIR /app

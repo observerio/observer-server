@@ -27,6 +27,7 @@ defmodule Web.Handlers.Dashboard do
 
   # Handle other messages from the browser - don't reply
   def websocket_handle({:text, data}, req, state) do
+    Logger.info("MESSAGE: ", inspect(data))
     data |> Poison.decode! |> _process(req, state)
   end
 
