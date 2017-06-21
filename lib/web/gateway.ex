@@ -20,7 +20,7 @@ defmodule Web.Gateway do
 
     Logger.debug("[gateway] elastic response: #{inspect(response)}")
 
-    Pubsub.publish("#{api_key}:logs", logs)
+    Pubsub.publish("#{api_key}:logs", %{type: :logs, logs: logs})
 
     :ok
   end
@@ -47,7 +47,7 @@ defmodule Web.Gateway do
     query = ["HMSET", "#{api_key}:vs"] ++ vars
     Redis.query(query)
 
-    Pubsub.publish("#{api_key}:vars", vars)
+    Pubsub.publish("#{api_key}:vars", %{type: :vars, vars: vars})
 
     :ok
   end

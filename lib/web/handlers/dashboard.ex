@@ -22,8 +22,7 @@ defmodule Web.Handlers.Dashboard do
   gproc should send here message on push update
   """
   def websocket_info(args, req, state) do
-    Logger.info("PUBSUB: #{inspect(args)}")
-    {:reply, {:text, inspect(args)}, req, state}
+    {:reply, {:text, Poison.encode!(args)}, req, state}
   end
 
   # Handle other messages from the browser - don't reply

@@ -8,6 +8,7 @@ SLEEP_TIME=10
 COMMAND_SLEEP_TIME=2
 
 KEY=`curl $TCP_HOST:$WEB_PORT/users/tokens | jq .token | sed 's/"\([^"]*\)"/\1/'`
+KEY='test'
 `curl -H "Content-Type: application/json" -d '{"token":"'$KEY'"}' -X POST "http://$TCP_HOST:$WEB_PORT/users/tokens"`
 
 while true
@@ -22,4 +23,3 @@ do
 
   sleep $SLEEP_TIME
 done
-
