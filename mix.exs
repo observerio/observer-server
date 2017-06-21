@@ -40,6 +40,7 @@ defmodule Web.Mixfile do
       {:maru, "~> 0.11"},
       {:redis_poolex, github: "oivoodoo/redis_poolex"},
       {:credo, "~> 0.7", only: [:dev, :test]},
+      {:dogma, "~> 0.1", only: [:dev, :test]},
       {:cors_plug, "~> 1.2"},
     ]
   end

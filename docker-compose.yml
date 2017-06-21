@@ -51,7 +51,7 @@ services:
     links:
       - redis
       - elasticsearch
-    command: /bin/sh make.sh server
+    command: make watch.server
 
   simulate:
     build: ./
@@ -68,7 +68,7 @@ services:
     tty: true
     links:
       - api
-    command: /bin/sh make.sh simulate
+    command: make simulate
 
   web:
     build: ./web/
@@ -87,6 +87,31 @@ services:
     links:
       - api
     command: /bin/ash -c "yarn && ./node_modules/.bin/ember s"
+
+  api.test:
+    build: ./
+    volumes:
+      - ./:/app
+    dns:
+      - "8.8.8.8"
+    networks:
+      - back-tier
+    ports:
+      - "127.0.0.1:8080:8080" # http
+      - "127.0.0.1:4000:4000" # ws
+      - "127.0.0.1:4001:4001" # ws
+      - "127.0.0.1:4002:4002" # ws
+      - "127.0.0.1:6666:6666" # tcp
+      - "127.0.0.1:6667:6667" # tcp
+      - "127.0.0.1:6668:6668" # tcp
+    tty: true
+    depends_on:
+      - redis
+      - elasticsearch
+    links:
+      - redis
+      - elasticsearch
+    command: make watch.test
 
 volumes:
   db-data:

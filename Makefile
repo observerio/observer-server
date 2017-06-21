@@ -9,17 +9,7 @@ build: stop
 	docker-compose up -d
 .PHONY: build
 
-deploy:
-	mix edeliver stop production
-	mix edeliver build release --version=$(RELEASE_VERSION)
-	mix edeliver deploy release to production --verbose --version=$(RELEASE_VERSION)
-	mix edeliver start production --verbose --version=$(RELEASE_VERSION)
-.PHONY: deploy
-
-restart:
-	mix edeliver stop production
-	mix edeliver start production --verbose --version=$(RELEASE_VERSION)
-.PHONY: restart
+rebuild: remove build
 
 stop:
 	docker-compose stop
@@ -29,6 +19,26 @@ test:
 	docker exec -ti `docker-compose ps -q $(NAME)` /bin/ash -c "mix test $(TEST_CASE)"
 .PHONY: test
 
+container.test:
+	mix dogma && mix test
+.PHONY: container.test
+
 console:
 	docker exec -ti `docker-compose ps -q $(NAME)` /bin/ash
 .PHONY: console
+
+server:
+	/bin/sh make.sh server
+.PHONY: server
+
+simulate:
+	/bin/sh make.sh simulate
+.PHONY: simulate
+
+watch.server:
+	watchman-make -p 'lib/**/*.ex' 'test/**/*.exs' 'config/*.exs' 'mix.exs' -t server
+.PHONY: watch.server
+
+watch.test:
+	watchman-make -p 'lib/**/*.ex' 'test/**/*.exs' 'config/*.exs' 'mix.exs' -t container.test
+.PHONY: watch.test

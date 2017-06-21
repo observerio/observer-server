@@ -6,8 +6,23 @@ RUN apk update \
  && apk add curl \
  && apk add make \
  && apk add --update alpine-sdk \
- && apk add erlang-dev \
- && rm -rf /var/cache/apk/*
+ && apk add erlang-dev
+
+RUN apk add --no-cache \
+  linux-headers \
+  automake \
+  autoconf \
+  python-dev \
+  && git clone https://github.com/facebook/watchman.git \
+  && cd watchman \
+  && git checkout v4.7.0 \
+  && ./autogen.sh \
+  && ./configure  \
+  && make \
+  && make install
+
+# cleanup
+RUN rm -rf /var/cache/apk/*
 
 EXPOSE 8080
 
