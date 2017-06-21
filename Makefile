@@ -40,5 +40,5 @@ watch.server:
 .PHONY: watch.server
 
 watch.test:
-	watchman-make -p 'lib/**/*.ex' 'test/**/*.exs' 'config/*.exs' 'mix.exs' -t container.test
+	docker-compose exec -ti `docker-compose ps -q $(NAME)` /bin/ash -c "watchman-make -p 'lib/**/*.ex' 'test/**/*.exs' 'config/*.exs' 'mix.exs' -t container.test"
 .PHONY: watch.test

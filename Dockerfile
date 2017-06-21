@@ -13,13 +13,15 @@ RUN apk add --no-cache \
   automake \
   autoconf \
   python-dev \
+  py-pip \
   && git clone https://github.com/facebook/watchman.git \
   && cd watchman \
   && git checkout v4.7.0 \
   && ./autogen.sh \
   && ./configure  \
   && make \
-  && make install
+  && make install \
+  && pip install pywatchman
 
 # cleanup
 RUN rm -rf /var/cache/apk/*
