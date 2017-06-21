@@ -7,7 +7,8 @@ WEB_PORT=8080
 SLEEP_TIME=10
 COMMAND_SLEEP_TIME=2
 
-KEY=`curl -H "Content-Type: application/json" -X POST "http://$TCP_HOST:8080/users" -d '{"email":"admin@example.com","password":"123456"}' | jq -r ".auth_key"`
+KEY=`curl $TCP_HOST:$WEB_PORT/users/tokens | jq .token | sed 's/"\([^"]*\)"/\1/'`
+`curl -H "Content-Type: application/json" -d '{"token":"'$KEY'"}' -X POST "http://$TCP_HOST:$WEB_PORT/users/tokens"`
 
 while true
 do

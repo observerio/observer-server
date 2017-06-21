@@ -24,7 +24,7 @@ export default Ember.Component.extend({
 
         /*
           4. The final step is to remove all of the listeners you have setup.
-        */
+          */
         socket.off('open', this.openHandler);
         socket.off('message', this.messageHandler);
         socket.off('close', this.closeHandler);
