@@ -9,6 +9,10 @@ build: stop
 	docker-compose up -d
 .PHONY: build
 
+restart.api:
+	docker-compose restart api && docker-compose logs -f --tail=1 api
+.PHONY: restart.api
+
 rebuild: remove build
 
 stop:

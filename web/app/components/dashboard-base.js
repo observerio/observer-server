@@ -1,9 +1,16 @@
 import Ember from 'ember';
 import ENV from 'observer-web-ember/config/environment';
 
+const {get, set} = Ember;
+
 export default Ember.Component.extend({
     websockets: Ember.inject.service(),
+
+    // refs
     socketClient: null,
+
+    // properties
+    token: null,
 
     didInsertElement() {
         this._super(...arguments);
@@ -26,13 +33,13 @@ export default Ember.Component.extend({
 
     openHandler(event) {
         const socket = this.get('socketClient');
-        socket.send({
-            'data': ''
-        });
+        const message = { event: 'init', data: { key: get(this, 'token') } };
+        socket.send(JSON.stringify(message));
         Ember.Logger.info(event);
     },
 
     closeHandler(event) {
-        Ember.Logger.info(event);
+        const socket = this.get('socketClient');
+        Ember.run.later(this, () => socket.reconnect(), 1000);
     }
 });
