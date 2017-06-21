@@ -3,7 +3,7 @@ use Mix.Config
 config :web,
   ws_port: 4001,
   ws_host: {0, 0, 0, 0},
-  tcp_port: 6667,
+  tcp_port: 6666,
   tcp_acceptors_size: 100
 
 config :maru, Web.Router,
