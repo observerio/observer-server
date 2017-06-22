@@ -12,7 +12,7 @@ const Var = Ember.Object.extend({
 const Log = Ember.Object.extend({
     timestamp: null,
     message: null
-})
+});
 
 export default Ember.Component.extend({
     websockets: Ember.inject.service(),
@@ -71,8 +71,9 @@ export default Ember.Component.extend({
         switch(message.type) {
             case 'logs':
                 let logs = get(this, 'logs');
-                message.logs.forEach((log) => logs.push(Log.create(log)))
-                set(this, 'logs', logs);
+                set(this, 'logs',
+                    logs.concat(
+                        message.logs.map((log) => Log.create(log))));
                 break;
             case 'vars':
                 let vars = message.vars.reduce((vars, v, index) => {
@@ -99,6 +100,6 @@ export default Ember.Component.extend({
                 break;
             default:
                 Ember.Logger.error(`[dashboard-base] can't parse socket message: ${message}`);
-        };
+        }
     }
 });
