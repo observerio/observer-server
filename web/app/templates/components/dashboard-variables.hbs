@@ -1,1 +1,8 @@
-{{yield}}
+<form>
+  {{#each vars as |var|}}
+    <div class='field-{{ var.type }}'>
+      <label form='{{ var.name }}'>{{ var.name }}</label>
+      <input type='text' name='{{ var.name }}' value='{{ var.value }}' />
+    </div>
+  {{/each}}
+</form>

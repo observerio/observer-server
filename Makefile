@@ -13,6 +13,10 @@ restart.api:
 	docker-compose restart api && docker-compose logs -f --tail=1 api
 .PHONY: restart.api
 
+restart.sim:
+	docker-compose restart simulate && docker-compose logs -f --tail=1 simulate
+.PHONY: restart.sim
+
 rebuild: remove build
 
 stop:
