@@ -4,8 +4,8 @@ TCP_HOST=${TCP_HOST:-localhost}
 TCP_PORT=6667
 WEB_PORT=8080
 
-SLEEP_TIME=10
-COMMAND_SLEEP_TIME=2
+SLEEP_TIME=20
+COMMAND_SLEEP_TIME=5
 
 KEY=`curl $TCP_HOST:$WEB_PORT/users/tokens | jq .token | sed 's/"\([^"]*\)"/\1/'`
 KEY='test'
