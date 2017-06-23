@@ -1,16 +1,20 @@
 import Ember from 'ember';
 
+const {get, set} = Ember;
+
 export default Ember.Component.extend({
+    dashboardSocket: Ember.inject.service(),
+
     actions: {
         confirm: function() {
-            this.sendAction('sendMessage', {
-                vars: ['1'],
+            get(this, 'dashboardSocket').sendMessage({
+                vars: ['1']
             });
         },
 
         confirmAll: function() {
-            this.sendAction('sendMessage', {
-                vars: ['1', '2'],
+            get(this, 'dashboardSocket').sendMessage({
+                vars: ['1']
             });
         }
     }

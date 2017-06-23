@@ -22,6 +22,7 @@ export default Ember.Component.extend({
     debug: debugLogger(),
 
     websockets: Ember.inject.service(),
+    dashboardSocket: Ember.inject.service(),
 
     // refs
     socketClient: null,
@@ -39,12 +40,13 @@ export default Ember.Component.extend({
         this._super(...arguments);
 
         const socket = this.get('websockets').socketFor(ENV.WS.HOST);
-
         socket.on('open', this.openHandler, this);
         socket.on('close', this.closeHandler, this);
         socket.on('message', this.messageHandler, this);
-
         this.set('socketClient', socket);
+
+        const dashboardSocket = get(this, 'dashboardSocket');
+        dashboardSocket.on('sendMessage', Ember.run.bind(this, this.sendMessage));
     },
 
     willDestroyElement() {
@@ -54,6 +56,9 @@ export default Ember.Component.extend({
         socket.off('open', this.openHandler);
         socket.off('close', this.closeHandler);
         socket.off('message', this.messageHandler);
+
+        const dashboardSocket = get(this, 'dashboardSocket');
+        dashboardSocket.off('sendMessage', this.sendMessage);
     },
 
     openHandler(event) {
@@ -120,11 +125,9 @@ export default Ember.Component.extend({
         }
     },
 
-    actions: {
-        sendMessage: function(message) {
-            const socket = get(this, 'socketClient');
-            this.debug(message);
-            socket.send(JSON.stringify(message))
-        }
+    sendMessage(message) {
+        const socket = get(this, 'socketClient');
+        this.debug(message);
+        socket.send(JSON.stringify(message))
     }
 });
