@@ -7,6 +7,11 @@ WEB_PORT=8080
 SLEEP_TIME=20
 COMMAND_SLEEP_TIME=5
 
+until $(curl --output /dev/null --silent --fail -X GET http://$TCP_HOST:$WEB_PORT/alive); do
+    printf '.'
+    sleep 5
+done
+
 # KEY=`curl $TCP_HOST:$WEB_PORT/users/tokens | jq .token | sed 's/"\([^"]*\)"/\1/'`
 KEY='testtesttest'
 `curl -H "Content-Type: application/json" -d '{"token":"'$KEY'"}' -X POST "http://$TCP_HOST:$WEB_PORT/users/tokens"`
