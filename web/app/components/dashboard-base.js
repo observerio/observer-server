@@ -33,7 +33,7 @@ export default Ember.Component.extend({
     logs: [],
     vars: [],
 
-    LOG_HISTORY: 1,
+    LOG_HISTORY: 200,
 
     didInsertElement() {
         this._super(...arguments);
@@ -97,7 +97,7 @@ export default Ember.Component.extend({
         let logs = get(this, 'logs');
         logs = logs.concat(message.logs.map((log) => Log.create(log)))
         if (logs.length > this.LOG_HISTORY) {
-            logs = slice(logs, this.LOG_HISTORY);
+            logs = slice(logs, logs.length - this.LOG_HISTORY);
         }
         set(this, 'logs', logs);
     },
