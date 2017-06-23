@@ -7,7 +7,7 @@ RUN echo '' > /etc/apk/repositories && \
 RUN apk update
 RUN apk add --force jq \
  && apk add --force putty \
- && apk add --force curl \
+ && apk add --force curl curl-dev \
  && apk add --force make \
  && apk add --force erlang-dev
 
