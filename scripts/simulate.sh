@@ -14,7 +14,7 @@ done
 
 # KEY=`curl $TCP_HOST:$WEB_PORT/users/tokens | jq .token | sed 's/"\([^"]*\)"/\1/'`
 KEY='testtesttest'
-`curl -H "Content-Type: application/json" -d '{"token":"'$KEY'"}' -X POST "http://$TCP_HOST:$WEB_PORT/users/tokens"`
+`curl -H "Content-Type: application/json" -d "'{"token":"'$KEY'"}'" -X POST "http://$TCP_HOST:$WEB_PORT/users/tokens"`
 
 while true
 do
