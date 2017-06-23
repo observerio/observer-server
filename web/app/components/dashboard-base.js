@@ -6,6 +6,7 @@ import slice from 'lodash/slice';
 import map from 'lodash/map';
 
 const {get, set} = Ember;
+const {later, bind} = Ember.run;
 
 const Var = Ember.Object.extend({
     type: null,
@@ -46,7 +47,7 @@ export default Ember.Component.extend({
         this.set('socketClient', socket);
 
         const dashboardSocket = get(this, 'dashboardSocket');
-        dashboardSocket.on('sendMessage', Ember.run.bind(this, this.sendMessage));
+        dashboardSocket.on('sendMessage', bind(this, this.sendMessage));
     },
 
     willDestroyElement() {
@@ -58,7 +59,7 @@ export default Ember.Component.extend({
         socket.off('message', this.messageHandler);
 
         const dashboardSocket = get(this, 'dashboardSocket');
-        dashboardSocket.off('sendMessage', this.sendMessage);
+        dashboardSocket.off('sendMessage', bind(this, this.sendMessage));
     },
 
     openHandler(event) {
@@ -70,7 +71,7 @@ export default Ember.Component.extend({
 
     closeHandler() {
         const socket = this.get('socketClient');
-        Ember.run.later(this, () => socket.reconnect(), 1000);
+        later(this, () => socket.reconnect(), 1000);
     },
 
     _processMessage(event) {
