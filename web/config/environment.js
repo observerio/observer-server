@@ -29,6 +29,8 @@ module.exports = function(environment) {
   };
 
   if (environment === 'development') {
+    ENV.logging_active = true;
+
     ENV.APP.HOST = "http://localhost:8080";
     ENV.WS = {
         HOST: "ws://127.0.0.1:4000/ws"

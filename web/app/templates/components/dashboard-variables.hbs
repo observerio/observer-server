@@ -3,6 +3,9 @@
     <div class='field-{{ var.type }}'>
       <label form='{{ var.name }}'>{{ var.name }}</label>
       <input type='text' name='{{ var.name }}' value='{{ var.value }}' />
+      <a {{action "confirm"}}> Y </a>
     </div>
   {{/each}}
+
+  <button {{action "confirmAll"}}> Save All </button>
 </form>
