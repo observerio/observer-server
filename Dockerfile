@@ -1,27 +1,19 @@
 FROM bitwalker/alpine-elixir:1.4.2
 
-RUN apk update \
- && apk add jq \
- && apk add putty \
- && apk add curl \
- && apk add make \
- && apk add --update alpine-sdk \
- && apk add erlang-dev
+RUN echo '' > /etc/apk/repositories && \
+  echo 'http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
+  echo 'http://nl.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
 
-RUN apk add --no-cache \
-  linux-headers \
-  automake \
-  autoconf \
-  python-dev \
-  py-pip \
-  && git clone https://github.com/facebook/watchman.git \
-  && cd watchman \
-  && git checkout v4.7.0 \
-  && ./autogen.sh \
-  && ./configure  \
-  && make \
-  && make install \
-  && pip install pywatchman
+RUN apk update
+RUN apk add --force jq \
+ && apk add --force putty \
+ && apk add --force curl \
+ && apk add --force make \
+ && apk add --force erlang-dev
+
+RUN apk add --force musl
+RUN apk add --force musl-dev
+RUN apk add --force alpine-sdk
 
 # cleanup
 RUN rm -rf /var/cache/apk/*
