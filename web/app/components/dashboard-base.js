@@ -121,9 +121,11 @@ export default Ember.Component.extend({
 
   actions: {
     sendMessage(message) {
-      const socket = get(this, 'socketClient');
-      debugger;
+      message.data = message.data || {};
+      message.data.token = get(this, 'token');
+
       this.debug(message);
+      const socket = get(this, 'socketClient');
       socket.send(JSON.stringify(message))
     }
   }

@@ -37,7 +37,7 @@ defmodule Web.Handlers.Dashboard do
     :ok
   end
 
-  defp _process(%{"event" => "vars", "data" => %{"token" => token, "vars" => vars}, req, state) do
+  defp _process(%{"event" => "vars", "data" => %{"token" => token, "vars" => vars}}, req, state) do
     Logger.info("VARS DATA: #{inspect(vars)}")
 
     Pubsub.publish("#{token}:vars:callback", %{vars: vars})

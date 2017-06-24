@@ -6,17 +6,17 @@ export default Ember.Component.extend({
   // actions
   sendMessage: null,
 
+  // variables
+  vars: [],
+
   actions: {
-    confirm: function() {
-      get(this, 'sendMessage')({
-        vars: ['1']
-      });
+    confirm: function(v) {
+      get(this, 'sendMessage')({event: 'vars', data: { vars: v }});
     },
 
     confirmAll: function() {
-      get(this, 'sendMessage')({
-        vars: ['1']
-      });
+      const vars = get(this, 'vars');
+      get(this, 'sendMessage')({event: 'vars', data: { vars: vars }});
     }
   }
 });

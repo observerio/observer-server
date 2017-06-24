@@ -1,9 +1,9 @@
 <form>
-  {{#each vars as |var|}}
-    <div class='field-{{ var.type }}'>
-      <label form='{{ var.name }}'>{{ var.name }}</label>
-      <input type='text' name='{{ var.name }}' value='{{ var.value }}' />
-      <a {{action "confirm"}}> Y </a>
+  {{#each vars as |v|}}
+    <div class='field-{{ v.type }}'>
+      <label form='{{ v.name }}'>{{ v.name }}</label>
+      <input type='text' name='{{ v.name }}' value='{{ v.value }}' />
+      <a {{action "confirm" v}}> Y </a>
     </div>
   {{/each}}
 

@@ -20,6 +20,8 @@ end
 defmodule Web.Tcp.Handler do
   require Logger
 
+  alias Web.Pubsub
+
   @moduledoc """
   `Handler` is wainting lines separated by \n new line, in case if handler don't
   see new line it starts to accumulate data until it receives new line.
@@ -31,6 +33,11 @@ defmodule Web.Tcp.Handler do
   def start_link(ref, socket, transport, opts) do
     pid = spawn_link(__MODULE__, :init, [ref, socket, transport, opts])
     {:ok, pid}
+  end
+
+  def handle_info(msg, state) do
+    Logger.info("TCP SERVER RECEIVED MESSAGE FROM SOCKET: #{inspect(msg)}")
+    {:noreply, state}
   end
 
   def init(ref, socket, transport, _opts = []) do
@@ -91,6 +98,7 @@ defmodule Web.Tcp.Handler do
       {:error, reason} ->
         Logger.error(inspect(reason))
       _ ->
+        Pubsub.subscribe("#{api_key}:vars:callback")
     end
   end
 end
