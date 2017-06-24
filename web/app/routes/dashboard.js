@@ -1,9 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
-    model(params) {
-        return {
-            token: params.token
-        }
+  model(params) {
+    return {
+      token: params.token
     }
+  }
 });

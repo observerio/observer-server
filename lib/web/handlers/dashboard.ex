@@ -37,13 +37,19 @@ defmodule Web.Handlers.Dashboard do
     :ok
   end
 
-  defp _process(%{"event" => "init", "data" => %{"key" => key}}, req, state) do
-    # TODO: do reconnect from client by using init event, websocket should ping
-    # the handlers
-    Pubsub.subscribe("#{key}:vars")
-    Pubsub.subscribe("#{key}:logs")
+  defp _process(%{"event" => "vars", "data" => %{"token" => token, "vars" => vars}, req, state) do
+    Logger.info("VARS DATA: #{inspect(vars)}")
 
-    state = %{keys: state[:keys] ++ key}
+    Pubsub.publish("#{token}:vars:callback", %{vars: vars})
+
+    {:ok, req, state}
+  end
+
+  defp _process(%{"event" => "init", "data" => %{"token" => token}}, req, state) do
+    Pubsub.subscribe("#{token}:vars")
+    Pubsub.subscribe("#{token}:logs")
+
+    state = %{keys: state[:keys] ++ token}
 
     {:ok, req, state}
   end
