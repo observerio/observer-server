@@ -2,5 +2,5 @@
 
 {{#dashboard-base token=model.token as |db| }}
   {{dashboard-logger logs=db.l}}
-  {{dashboard-variables vars=db.v sendMessage="sendMessage"}}
+  {{dashboard-variables vars=db.v sendMessage=db.sendMessage}}
 {{/dashboard-base}}
