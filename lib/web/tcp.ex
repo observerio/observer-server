@@ -97,7 +97,7 @@ defmodule Web.Tcp.Client do
   def _pack(token, "vars", vars) do
     vars = vars
     |> Poison.encode!
-    |> Base.encode64!
+    |> Base.encode64
 
     "v:#{token}:vars"
   end
