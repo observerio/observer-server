@@ -69,17 +69,21 @@ defmodule Web.Tcp.Client do
 
   def init(token) do
     Pubsub.subscribe("#{token}:vars:callback")
-    {:ok, %{token: token}}
+    {:ok, %{token: token, messages: []}}
   end
 
-  def handle_info(%{vars: vars}, %{token: token} = state) do
+  def handle_info(%{vars: vars}, %{token: token, messages: messages} = state) do
     Logger.debug("[tcp.sender] received message: #{inspect(vars)}")
     message = _pack(token, "vars", vars)
     Logger.debug("[tcp.sender] packed message: #{inspect(message)}")
 
-    Logger.debug("[tcp.sender] begin send message: #{inspect(message)}")
-    token |> _get_socket |> _send_back(message)
-    Logger.debug("[tcp.sender] done send message: #{inspect(message)}")
+    messages = messages ++ [message]
+
+    Logger.debug("[tcp.sender] begin send message: #{inspect(messages)}")
+    state = token |> _get_socket |> _send_back(messages, state)
+    Logger.debug("[tcp.sender] done send message: #{inspect(messages)}")
+
+    Logger.debug("[tcp.sender] messages: #{inspect(messages)}")
 
     {:noreply, state}
   end
@@ -89,9 +93,18 @@ defmodule Web.Tcp.Client do
     :ok
   end
 
-  def _send_back({socket, transport}, message) do
-    Logger.debug("[tcp.sender] socket: #{inspect(socket)}, transport: #{inspect(transport)}, message: #{inspect(message)}")
+  defp _send_back({:ok, socket}, messages, state) do
+    :ok = _send(socket, messages)
+    %{state | messages: []}
+  end
+  defp _send_back(:enqueue, messages, state) do
+    %{state | messages: messages}
+  end
+
+  defp _send(s, []), do: :ok
+  defp _send({socket, transport} = s, [message | messages]) do
     transport.send(socket, message)
+    _send(s, messages)
   end
 
   def _pack(token, "vars", vars) do
@@ -103,10 +116,12 @@ defmodule Web.Tcp.Client do
   end
 
   defp _get_socket(token) do
-    case Registry.lookup(Registry.Sockets, token) do
-      [{_, value}] -> value
-      _ -> Logger.error("[tcp.sender] no socket found in registry")
+    response = case Registry.lookup(Registry.Sockets, token) do
+      [{_, socket}] -> {:ok, socket}
+      [] -> :enqueue
     end
+    Logger.debug("[tpc.client] _get_socket: #{inspect(response)}")
+    response
   end
 end
 
@@ -171,6 +186,8 @@ defmodule Web.Tcp.Handler do
         # limited resources.
         Web.Tcp.ClientSupervisor.start_client(api_key)
 
+        Logger.debug("[tcp.server] transport respond with OK")
+
         case transport.send(socket, "OK") do
           {:error, reason} ->
             Logger.error(inspect(reason))
@@ -217,7 +234,7 @@ defmodule Web.Tcp.Protocol do
     Client messages:
       - `i:s:name:value` - var set by name value inside of app
   """
-  def process("l:" <> <<api_key :: bytes-size(12)>> <> ":" <> logs = line) do
+  def process("l:" <> <<api_key :: bytes-size(12)>> <> ":" <> logs) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, logs: #{inspect(logs)}")
     logs
     |> Base.decode64!
@@ -225,7 +242,7 @@ defmodule Web.Tcp.Protocol do
     |> Gateway.logs(api_key)
   end
 
-  def process("i:" <> <<api_key :: bytes-size(12)>> <> ":" <> vars = line) do
+  def process("i:" <> <<api_key :: bytes-size(12)>> <> ":" <> vars) do
     Logger.debug("[protocol] api_key: #{inspect(api_key)}, vars: #{inspect(vars)}")
     vars
     |> Base.decode64!
@@ -233,7 +250,7 @@ defmodule Web.Tcp.Protocol do
     |> Gateway.vars(api_key)
   end
 
-  def process("v:" <> <<api_key :: bytes-size(12)>> = line) do
+  def process("v:" <> <<api_key :: bytes-size(12)>>) do
     if Users.verify_key(api_key) do
       {:verified, api_key}
     else
