@@ -11,7 +11,8 @@ defmodule Web.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Starts a worker by calling: Web.Worker.start_link(arg1, arg2, arg3)
-      worker(Web.Tcp, []),
+      supervisor(Web.Tcp.ServerSupervisor, []),
+      supervisor(Web.Tcp.ClientSupervisor, []),
       supervisor(Registry, [:unique, Registry.Sockets]),
       Plug.Adapters.Cowboy.child_spec(:http, __MODULE__, [], [
                                         ip: Application.get_env(:web, :ws_host),

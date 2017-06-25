@@ -18,7 +18,7 @@ defmodule Web.Gateway do
 
     {:ok, 200, response} = Tirexs.bump!(payload)._bulk()
 
-    Logger.debug("[gateway] elastic response: #{inspect(response)}")
+    Logger.debug("[gateway.logs] elastic response: #{inspect(response)}")
 
     Pubsub.publish("#{api_key}:logs", %{type: :logs, logs: logs})
 

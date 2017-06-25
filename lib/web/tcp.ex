@@ -1,4 +1,44 @@
-defmodule Web.Tcp do
+defmodule Web.Tcp.ServerSupervisor do
+  use Supervisor
+
+  def start_link do
+    Supervisor.start_link(__MODULE__, [], name: :tcp_server_supervisor)
+  end
+
+  def init(_) do
+    children = [
+      worker(Web.Tcp.Server, [])
+    ]
+
+    supervise(children, strategy: :one_for_one)
+  end
+end
+
+defmodule Web.Tcp.ClientSupervisor do
+  use Supervisor
+
+  def start_link do
+    Supervisor.start_link(__MODULE__, [], name: :tcp_client_supervisor)
+  end
+
+  def start_client(token) do
+    Supervisor.start_child(:tcp_client_supervisor, [token])
+  end
+
+  def init(_) do
+    children = [
+      worker(Web.Tcp.Client, [])
+    ]
+
+    # We also changed the `strategy` to `simple_one_for_one`.
+    # With this strategy, we define just a "template" for a child,
+    # no process is started during the Supervisor initialization, just
+    # when we call `start_child/2`
+    supervise(children, strategy: :simple_one_for_one)
+  end
+end
+
+defmodule Web.Tcp.Server do
   require Logger
 
   def start_link do
@@ -14,6 +54,59 @@ defmodule Web.Tcp do
 
   def _acceptors_size do
     Application.get_env(:web, :tcp_acceptors_size)
+  end
+end
+
+defmodule Web.Tcp.Client do
+  require Logger
+  require Poison
+
+  alias Web.Pubsub
+
+  def start_link(token) do
+    GenServer.start_link(__MODULE__, token, name: String.to_atom(token))
+  end
+
+  def init(token) do
+    Pubsub.subscribe("#{token}:vars:callback")
+    {:ok, %{token: token}}
+  end
+
+  def handle_info(%{vars: vars}, %{token: token} = state) do
+    Logger.debug("[tcp.sender] received message: #{inspect(vars)}")
+    message = _pack(token, "vars", vars)
+    Logger.debug("[tcp.sender] packed message: #{inspect(message)}")
+
+    Logger.debug("[tcp.sender] begin send message: #{inspect(message)}")
+    token |> _get_socket |> _send_back(message)
+    Logger.debug("[tcp.sender] done send message: #{inspect(message)}")
+
+    {:noreply, state}
+  end
+
+  def terminate(reason, status) do
+    Logger.debug("[tcp.sender] reason: #{inspect(reason)}, status: #{inspect(status)}")
+    :ok
+  end
+
+  def _send_back({socket, transport}, message) do
+    Logger.debug("[tcp.sender] socket: #{inspect(socket)}, transport: #{inspect(transport)}, message: #{inspect(message)}")
+    transport.send(socket, message)
+  end
+
+  def _pack(token, "vars", vars) do
+    vars = vars
+    |> Poison.encode!
+    |> Base.encode64!
+
+    "v:#{token}:vars"
+  end
+
+  defp _get_socket(token) do
+    case Registry.lookup(Registry.Sockets, token) do
+      [{_, value}] -> value
+      _ -> Logger.error("[tcp.sender] no socket found in registry")
+    end
   end
 end
 
@@ -33,11 +126,6 @@ defmodule Web.Tcp.Handler do
   def start_link(ref, socket, transport, opts) do
     pid = spawn_link(__MODULE__, :init, [ref, socket, transport, opts])
     {:ok, pid}
-  end
-
-  def handle_info(msg, state) do
-    Logger.info("TCP SERVER RECEIVED MESSAGE FROM SOCKET: #{inspect(msg)}")
-    {:noreply, state}
   end
 
   def init(ref, socket, transport, _opts = []) do
@@ -76,7 +164,12 @@ defmodule Web.Tcp.Handler do
 
     case line |> Web.Tcp.Protocol.process do
       {:verified, api_key} ->
-        _register_socket(api_key, socket)
+        _register_socket(api_key, socket, transport)
+
+        # TODO: register sender on callback from pubsub channel, don't need
+        # to check if it registered or not but we should clean up it because of
+        # limited resources.
+        Web.Tcp.ClientSupervisor.start_client(api_key)
 
         case transport.send(socket, "OK") do
           {:error, reason} ->
@@ -91,14 +184,13 @@ defmodule Web.Tcp.Handler do
     end
   end
 
-  def _register_socket(api_key, socket) do
-    case Registry.register(Registry.Sockets, api_key, socket) do
+  def _register_socket(api_key, socket, transport) do
+    case Registry.register(Registry.Sockets, api_key, {socket, transport}) do
       {:error, {:already_registered, _pid}} ->
-        Registry.update_value(Registry.Sockets, api_key, fn (_) -> socket end)
+        Registry.update_value(Registry.Sockets, api_key, fn (_) -> {socket, transport} end)
       {:error, reason} ->
         Logger.error(inspect(reason))
       _ ->
-        Pubsub.subscribe("#{api_key}:vars:callback")
     end
   end
 end
