@@ -79,6 +79,12 @@ defmodule Web.Tcp.Client do
 
     messages = messages ++ [message]
 
+    # TODO: Don't store more than 100 items in queue for now, don't know behaviuor
+    # for future
+    if Enum.count(messages) > 100 do
+      messages = Enum.slice(mesages, -100..-1)
+    end
+
     Logger.debug("[tcp.sender] begin send message: #{inspect(messages)}")
     state = token |> _get_socket |> _send_back(messages, state)
     Logger.debug("[tcp.sender] done send message: #{inspect(messages)}")
