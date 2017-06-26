@@ -73,29 +73,29 @@ defmodule Web.Tcp.Client do
   end
 
   def handle_info(%{vars: vars}, %{token: token, messages: messages} = state) do
-    Logger.debug("[tcp.sender] received message: #{inspect(vars)}")
+    Logger.debug("[tcp.client] received message: #{inspect(vars)}")
     message = _pack(token, "vars", vars)
-    Logger.debug("[tcp.sender] packed message: #{inspect(message)}")
+    Logger.debug("[tcp.client] packed message: #{inspect(message)}")
 
     messages = messages ++ [message]
 
     # TODO: Don't store more than 100 items in queue for now, don't know behaviuor
     # for future
     if Enum.count(messages) > 100 do
-      messages = Enum.slice(mesages, -100..-1)
+      messages = Enum.slice(messages, -100..-1)
     end
 
-    Logger.debug("[tcp.sender] begin send message: #{inspect(messages)}")
+    Logger.debug("[tcp.client] begin send message: #{inspect(messages)}")
     state = token |> _get_socket |> _send_back(messages, state)
-    Logger.debug("[tcp.sender] done send message: #{inspect(messages)}")
+    Logger.debug("[tcp.client] done send message: #{inspect(messages)}")
 
-    Logger.debug("[tcp.sender] messages: #{inspect(messages)}")
+    Logger.debug("[tcp.client] messages: #{inspect(messages)}")
 
     {:noreply, state}
   end
 
   def terminate(reason, status) do
-    Logger.debug("[tcp.sender] reason: #{inspect(reason)}, status: #{inspect(status)}")
+    Logger.debug("[tcp.client] reason: #{inspect(reason)}, status: #{inspect(status)}")
     :ok
   end
 
@@ -118,15 +118,16 @@ defmodule Web.Tcp.Client do
     |> Poison.encode!
     |> Base.encode64
 
-    "v:#{token}:vars"
+    "v:#{token}:#{vars}\n"
   end
 
   defp _get_socket(token) do
+    Logger.debug("[tcp.socket] search for socket, transport by token: #{inspect(token)}")
     response = case Registry.lookup(Registry.Sockets, token) do
       [{_, socket}] -> {:ok, socket}
       [] -> :enqueue
     end
-    Logger.debug("[tpc.client] _get_socket: #{inspect(response)}")
+    Logger.debug("[tcp.client] _get_socket: #{inspect(response)}")
     response
   end
 end
@@ -151,22 +152,52 @@ defmodule Web.Tcp.Handler do
 
   def init(ref, socket, transport, _opts = []) do
     :ok = :ranch.accept_ack(ref)
-    loop(socket, transport, "")
+
+    case transport.peername(socket) do
+      {:ok, _peer} -> loop(socket, transport, "")
+      {:error, reason} -> Logger.error("[tcp.handler] init receive error reason: #{inspect(reason)}")
+    end
   end
 
+  @timeout 5_000
+
   def loop(socket, transport, acc) do
-    case transport.recv(socket, 0, 5000) do
-      {:ok, data} ->
-        Logger.info("TCP data: #{inspect(data)}")
+    # Don't flood messages of transport, receive once and leave the remaining
+    # data in socket until we run recv again.
+    transport.setopts(socket, [active: :once])
+
+    # before to proceed with receive block on messages we should call
+    # once transport.messages() to ping ranch
+    {ok, closed, error} = transport.messages()
+
+    receive do
+      {ok, socket, data} ->
+        Logger.info("[tcp.handler] received data: #{inspect(data)}")
 
         acc <> data
         |> String.split("\n")
         |> Enum.map(&(String.trim(&1)))
         |> _process(socket, transport)
-      _ ->
-        :ok = transport.close(socket)
+
+        loop(socket, transport, "")
+      {closed, socket} ->
+        Logger.debug("[tcp.handler] closed socket: #{inspect(socket)}")
+      {error, socket, reason} ->
+        Logger.error("[tcp.handler] socket: #{inspect(socket)}, closed becaose of the error reason: #{inspect(reason)}")
+      {:error, error} ->
+        Logger.error("[tcp.handler] error: #{inspect(error)}")
+      {'EXIT', parent, reason} ->
+        Logger.error("[tcp.handler] exit parent reason: #{inspect(reason)}")
+        Process.exit(self(), :kill)
+      message ->
+        Logger.debug("[tcp.handler] message on receive block: #{inspect(message)}")
+    after @timeout ->
+      Logger.debug("[tcp.handler] received timeout on processing messages from transport")
+      loop(socket, transport, acc)
     end
   end
+
+  defp _kill(), do: Process.exit(self(), :kill)
 
   defp _process([], socket, transport), do: loop(socket, transport, "")
   defp _process([""], socket, transport), do: loop(socket, transport, "")
@@ -192,9 +223,9 @@ defmodule Web.Tcp.Handler do
         # limited resources.
         Web.Tcp.ClientSupervisor.start_client(api_key)
 
-        Logger.debug("[tcp.server] transport respond with OK")
+        Logger.debug("[tcp.server] transport should respond with OK")
 
-        case transport.send(socket, "OK") do
+        case transport.send(socket, "OK\n") do
           {:error, reason} ->
             Logger.error(inspect(reason))
           _ ->
@@ -208,6 +239,8 @@ defmodule Web.Tcp.Handler do
   end
 
   def _register_socket(api_key, socket, transport) do
+    Logger.debug("[tcp.handler] _register_socket token: #{api_key}")
+
     case Registry.register(Registry.Sockets, api_key, {socket, transport}) do
       {:error, {:already_registered, _pid}} ->
         Registry.update_value(Registry.Sockets, api_key, fn (_) -> {socket, transport} end)
@@ -241,7 +274,7 @@ defmodule Web.Tcp.Protocol do
       - `i:s:name:value` - var set by name value inside of app
   """
   def process("l:" <> <<api_key :: bytes-size(12)>> <> ":" <> logs) do
-    Logger.debug("[protocol] api_key: #{inspect(api_key)}, logs: #{inspect(logs)}")
+    Logger.debug("[protocol] api_key: #{api_key}, logs: #{inspect(logs)}")
     logs
     |> Base.decode64!
     |> Poison.decode!
@@ -249,7 +282,7 @@ defmodule Web.Tcp.Protocol do
   end
 
   def process("i:" <> <<api_key :: bytes-size(12)>> <> ":" <> vars) do
-    Logger.debug("[protocol] api_key: #{inspect(api_key)}, vars: #{inspect(vars)}")
+    Logger.debug("[protocol] api_key: #{api_key}, vars: #{inspect(vars)}")
     vars
     |> Base.decode64!
     |> Poison.decode!
@@ -260,7 +293,7 @@ defmodule Web.Tcp.Protocol do
     if Users.verify_key(api_key) do
       {:verified, api_key}
     else
-      {:error, "not registered user with api_key: #{inspect(api_key)}"}
+      {:error, "not registered user with api_key: #{api_key}"}
     end
   end
 
