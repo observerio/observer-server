@@ -1,5 +1,5 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: v1
+kind: ReplicationController
 metadata:
   creationTimestamp: null
   labels:
@@ -21,9 +21,9 @@ spec:
             - containerPort: 6379
           volumeMounts:
             - mountPath: /data
-              name: es-data
+              name: redis-data
           resources: {}
       volumes:
-        - name: es-data
+        - name: redis-data
           emptyDir: {}
 status: {}
