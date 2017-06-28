@@ -45,7 +45,7 @@ spec:
           name: transport
           protocol: TCP
         volumeMounts:
-        - mountPath: /data
+        - mountPath: /es-data
           name: es-data
       volumes:
       - name: es-data
