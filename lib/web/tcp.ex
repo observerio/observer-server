@@ -42,7 +42,7 @@ defmodule Web.Tcp.Server do
   require Logger
 
   def start_link do
-    Logger.info("[tcp] starting server on port :#{_port()}")
+    Logger.debug("[tcp] starting server on port :#{_port()}")
     opts = [port: _port()]
     {:ok, _} = :ranch.start_listener(:tcp, _acceptors_size(), :ranch_tcp,
                                      opts, Web.Tcp.Handler, [])
@@ -172,7 +172,7 @@ defmodule Web.Tcp.Handler do
 
     receive do
       {ok, socket, data} ->
-        Logger.info("[tcp.handler] received data: #{inspect(data)}")
+        Logger.debug("[tcp.handler] received data: #{inspect(data)}")
 
         acc <> data
         |> String.split("\n")

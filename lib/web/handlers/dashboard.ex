@@ -27,18 +27,18 @@ defmodule Web.Handlers.Dashboard do
 
   # Handle other messages from the browser - don't reply
   def websocket_handle({:text, data}, req, state) do
-    Logger.info("MESSAGE: #{inspect(data)}")
+    Logger.debug("MESSAGE: #{inspect(data)}")
     data |> Poison.decode! |> _process(req, state)
   end
 
   # No matter why we terminate, remove all of this pids subscriptions
   def websocket_terminate(_reason, _req, state) do
-    Logger.info(inspect(state))
+    Logger.debug(inspect(state))
     :ok
   end
 
   defp _process(%{"event" => "vars", "data" => %{"token" => token, "vars" => vars}}, req, state) do
-    Logger.info("VARS DATA: #{inspect(vars)}")
+    Logger.debug("VARS DATA: #{inspect(vars)}")
 
     Pubsub.publish("#{token}:vars:callback", %{vars: vars})
 
