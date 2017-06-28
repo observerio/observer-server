@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api
+  name: api
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: api
+    spec:
+      containers:
+      - args:
+        - /bin/ash
+        - -c
+        - /usr/bin/make server
+        name: api
+        ports:
+        - containerPort: 8080
+          hostIP: 127.0.0.1
+        - containerPort: 4000
+          hostIP: 127.0.0.1
+        - containerPort: 4001
+          hostIP: 127.0.0.1
+        - containerPort: 4002
+          hostIP: 127.0.0.1
+        - containerPort: 6666
+          hostIP: 127.0.0.1
+        - containerPort: 6667
+          hostIP: 127.0.0.1
+        - containerPort: 6668
+          hostIP: 127.0.0.1
+        resources: {}
+        tty: true
+        volumeMounts:
+        - mountPath: /app
+          name: api-claim0
+      restartPolicy: Always
+      volumes:
+      - name: api-claim0
+        persistentVolumeClaim:
+          claimName: api-claim0
+status: {}

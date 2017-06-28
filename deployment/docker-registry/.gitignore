@@ -1,0 +1,10 @@
+do-key
+do-key.pub
+*.tfstate
+*.tfstate.backup
+*.tfvars
+certs/ca.*
+registry_auth
+registry_auth.old.*
+certs/registry.*
+auth/htpasswd
