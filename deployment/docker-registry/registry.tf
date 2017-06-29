@@ -22,7 +22,7 @@ resource "digitalocean_droplet" "registry" {
     }
 
     provisioner "local-exec" {
-      command = "chmod +x gen_reg_cert.sh && ./gen_reg_cert.sh \"${var.common_name}\""
+      command = "chmod +x gen_reg_cert.sh && ./gen_reg_cert.sh \"${var.domain_name}\""
     }
 
     provisioner "local-exec" {

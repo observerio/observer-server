@@ -10,6 +10,9 @@ echo -e "Generating credentials for $1 user(s)\n"
 
 OPENSSL_PATH=/System/Library/OpenSSL/openssl.cnf
 
+echo 'DELETE auth/htpasswd...'
+rm auth/htpasswd || true
+
 function generate_CA {
   echo 'begin generate CA'
   openssl genrsa -out certs/ca.key 2048 && openssl req -subj "/C=US/ST=NY/L=Flavortown/O=Guy Fieri/OU=Development CA" -config $OPENSSL_PATH -new -key certs/ca.key -x509 -days 1825 -out certs/ca.crt

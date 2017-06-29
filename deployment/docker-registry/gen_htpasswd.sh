@@ -22,7 +22,7 @@ if [ ! -f auth/htpasswd ]; then
   fi
 
 else
-  
+
   echo "existing htpasswd found."
 
 fi
