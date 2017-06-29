@@ -42,6 +42,7 @@ defmodule Web.Mixfile do
       {:credo, "~> 0.7", only: [:dev, :test]},
       {:dogma, "~> 0.1", only: [:dev, :test]},
       {:cors_plug, "~> 1.2"},
+      {:mix_docker, "~> 0.5.0"}
     ]
   end
 end
