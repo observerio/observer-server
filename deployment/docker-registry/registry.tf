@@ -17,9 +17,9 @@ resource "digitalocean_droplet" "registry" {
     volume_ids = ["${digitalocean_volume.registry-data.id}"]
     ssh_keys   = ["${split(",", var.ssh_fingerprint)}"]
 
-    /* provisioner "local-exec" { */
-    /*   command = "chmod +x gen_keys.sh && ./gen_keys.sh ${var.user_count}" */
-    /* } */
+    provisioner "local-exec" {
+      command = "chmod +x gen_keys.sh && ./gen_keys.sh ${var.user_count}"
+    }
 
     provisioner "local-exec" {
       command = "chmod +x gen_reg_cert.sh && ./gen_reg_cert.sh \"${var.common_name}\""
@@ -55,4 +55,9 @@ resource "digitalocean_droplet" "registry" {
                   "docker run -d -p 5000:5000 --restart=always --name registry -v /registry-data/registry:/var/lib/registry -v /root/certs:/certs -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/registry.crt -e REGISTRY_HTTP_TLS_KEY=/certs/registry.key -e \"REGISTRY_AUTH=htpasswd\" -e \"REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm\" -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -v /root/auth:/auth registry:2"
                 ]
     }
+}
+
+resource "digitalocean_domain" "default" {
+  name       = "${var.domain_name}"
+  ip_address = "${digitalocean_droplet.registry.ipv4_address}"
 }

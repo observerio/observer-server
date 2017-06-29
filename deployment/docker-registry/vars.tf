@@ -18,6 +18,10 @@ variable "common_name" {
   description = "The FQDN of your registry (i.e. registry.docker.biz)"
   default = ""
 }
+variable "domain_name" {
+  description = "Domain name that should be attached in Digital Ocean"
+  default = ""
+}
 variable "vol_size" {
   description = "Size of the Registry Volume"
   default = "1Gb"
