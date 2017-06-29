@@ -6,18 +6,16 @@ resource "digitalocean_volume" "registry-data" {
     region      = "${var.region}"
     name        = "registry-data"
     size        = "${var.vol_size}"
-    description = "Your Registry Data Volume"
+    description = "Docker registry data volume"
 }
 
 resource "digitalocean_droplet" "registry" {
-    image = "docker"
-    name = "${var.common_name}"
-    region = "${var.region}"
-    size = "512mb"
+    image      = "docker"
+    name       = "${var.common_name}"
+    region     = "${var.region}"
+    size       = "512mb"
     volume_ids = ["${digitalocean_volume.registry-data.id}"]
-    ssh_keys = [
-        "${var.ssh_fingerprint}"
-    ]
+    ssh_keys   = ["${split(",", var.ssh_fingerprint)}"]
 
     connection {
       user = "root"

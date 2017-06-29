@@ -41,29 +41,6 @@ If you do not require the above customizations, simply proceed to run
 terraform apply
 ```
 
-You can, however, pre-populate the following variables in your `terraform.tfvars` file using this format:
-
-```
-do_token = "<Your DigitalOcean API Token"
-
-region = "nyc1"
-
-#This must be a fully qualified domain name, if you do plan to generate certificates automatically
-common_name = "registry.lol.butts"
-
-pvt_key = "./path-to-private-key"
-
-pub_key = "./path-to-public-key"
-
-ssh_fingerprint = "<Fingerprint of SSH key used in your DO account"
-
-#Size of the Registry Data volume in GB
-vol_size = "10"
-
-#Number of user accounts to generate (if a user list is not imported; this value is taken, but ignored if a list is provided)
-user_count = "3"
-```
-
 Migrating Data
 ---------------
 

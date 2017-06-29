@@ -4,7 +4,6 @@ variable "hosts" {
   default = 0
 }
 
-
 variable "ssh_fingerprint" {}
 variable "ssh_private_key" {
     default = "~/.ssh/id_rsa"
