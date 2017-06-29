@@ -6,13 +6,15 @@ fi
 
 echo -e "Generating credentials for $1 user(s)\n"
 
+OPENSSL_PATH=/System/Library/OpenSSL/openssl.cnf
+
 function generate_CA {
-  openssl genrsa -out certs/ca.key 2048 && openssl req -subj "/C=US/ST=NY/L=Flavortown/O=Guy Fieri/OU=Development CA" -config /usr/lib/ssl/openssl.cnf -new -key certs/ca.key -x509 -days 1825 -out certs/ca.crt
+  openssl genrsa -out certs/ca.key 2048 && openssl req -subj "/C=US/ST=NY/L=Flavortown/O=Guy Fieri/OU=Development CA" -config $OPENSSL_PATH -new -key certs/ca.key -x509 -days 1825 -out certs/ca.crt
 }
 
 function generate_creds {
   if [ ! -f auth/htpasswd ]; then
-    for ((n=0;n<$1;n++)); do echo "imgadm-$n " "`date +%s | sha256sum | base64 | head -c 32 ; echo`" >> registry_auth && sleep 1; done
+    for ((n=0;n<$1;n++)); do echo "imgadm-$n " "`date +%s | shasum -a 256 | base64 | head -c 32 ; echo`" >> registry_auth && sleep 1; done
   else
     echo "auth/htpasswd exists; no new credentials being created."
   fi
@@ -21,7 +23,7 @@ function generate_creds {
 if [ -s "registry_auth" ]
 then
   echo "File not empty; backing up to registry_auth.old" && \
-  mv registry_auth registry_auth.old.`date +%s | sha256sum | base64 | head -c 6 ; echo` && \
+  mv registry_auth registry_auth.old.`date +%s | shasum -a 256 | base64 | head -c 6 ; echo` && \
   generate_creds $1
 
 else
@@ -44,3 +46,5 @@ if [ ! -f ca.key ]; then
 else
     echo "CA key and cert already exist. Skipping..."
 fi
+
+echo "DONE gen_keys.sh"

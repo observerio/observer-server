@@ -17,14 +17,9 @@ resource "digitalocean_droplet" "registry" {
     volume_ids = ["${digitalocean_volume.registry-data.id}"]
     ssh_keys   = ["${split(",", var.ssh_fingerprint)}"]
 
-    connection {
-      user = "root"
-      private_key = "${file(var.pvt_key)}"
-    }
-
-    provisioner "local-exec" {
-      command = "chmod +x gen_keys.sh && ./gen_keys.sh ${var.user_count}"
-    }
+    /* provisioner "local-exec" { */
+    /*   command = "chmod +x gen_keys.sh && ./gen_keys.sh ${var.user_count}" */
+    /* } */
 
     provisioner "local-exec" {
       command = "chmod +x gen_reg_cert.sh && ./gen_reg_cert.sh \"${var.common_name}\""
