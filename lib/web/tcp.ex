@@ -44,16 +44,16 @@ defmodule Web.Tcp.Server do
   def start_link do
     Logger.debug("[tcp] starting server on port :#{_port()}")
     opts = [port: _port()]
-    {:ok, _} = :ranch.start_listener(:tcp, _acceptors_size(), :ranch_tcp,
-                                     opts, Web.Tcp.Handler, [])
+    {:ok, _} = :ranch.start_listener(
+      :tcp, _acceptors_size(), :ranch_tcp, opts, Web.Tcp.Handler, [])
   end
 
   def _port do
-    Application.get_env(:web, :tcp_port)
+    String.to_integer Application.get_env(:web, :tcp_port)
   end
 
   def _acceptors_size do
-    Application.get_env(:web, :tcp_acceptors_size)
+    String.to_integer Application.get_env(:web, :tcp_acceptors_size)
   end
 end
 
