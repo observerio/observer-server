@@ -245,7 +245,7 @@ defmodule Web.Tcp.Handler do
       {:error, {:already_registered, _pid}} ->
         Registry.update_value(Registry.Sockets, api_key, fn (_) -> {socket, transport} end)
       {:error, reason} ->
-        Logger.error(inspect(reason))
+        Logger.error("[tcp] reason: #{inspect(reason)}")
       _ ->
     end
   end
