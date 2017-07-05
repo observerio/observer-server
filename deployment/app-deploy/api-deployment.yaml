@@ -15,32 +15,36 @@ spec:
       labels:
         io.kompose.service: api
     spec:
+      imagePullSecrets:
+        - name: regsecret
       containers:
-      - args:
-        - /bin/ash
-        - -c
-        - /usr/bin/make server
+      - name: observer-api
+        image: observer_api:0.0.1
+        args:
+          - /bin/ash
+          - -c
+          - /usr/bin/make server
         name: api
         ports:
-        - containerPort: 8080
-          hostIP: 127.0.0.1
-        - containerPort: 4000
-          hostIP: 127.0.0.1
-        - containerPort: 4001
-          hostIP: 127.0.0.1
-        - containerPort: 4002
-          hostIP: 127.0.0.1
-        - containerPort: 6666
-          hostIP: 127.0.0.1
-        - containerPort: 6667
-          hostIP: 127.0.0.1
-        - containerPort: 6668
-          hostIP: 127.0.0.1
+          - containerPort: 8080
+            hostIP: 127.0.0.1
+          - containerPort: 4000
+            hostIP: 127.0.0.1
+          - containerPort: 4001
+            hostIP: 127.0.0.1
+          - containerPort: 4002
+            hostIP: 127.0.0.1
+          - containerPort: 6666
+            hostIP: 127.0.0.1
+          - containerPort: 6667
+            hostIP: 127.0.0.1
+          - containerPort: 6668
+            hostIP: 127.0.0.1
         resources: {}
         tty: true
         volumeMounts:
-        - mountPath: /app
-          name: api-claim0
+          - mountPath: /app
+            name: api-claim0
       restartPolicy: Always
       volumes:
       - name: api-claim0

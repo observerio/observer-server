@@ -51,8 +51,10 @@ watch.test:
 	docker-compose exec -ti `docker-compose ps -q $(NAME)` /bin/ash -c "watchman-make -p 'lib/**/*.ex' 'test/**/*.exs' 'config/*.exs' 'mix.exs' -t container.test"
 .PHONY: watch.test
 
+# should rebuild image with api erlang app inside and then push it to our
+# docker private registry.
 release:
-	mix docker.build && mix docker.release
-	docker tag observer_api:$VERSION docker-registry.rubyforce.co:5000/observer/observer_api:$VERSION
-	docker push observer_api:$VERSION
+	mix docker.build && mix docker.release && \
+	docker tag observer_api:release docker-registry.rubyforce.co:5000/observer/observer_api:$VERSION && \
+	docker push docker-registry.rubyforce.co:5000/observer/observer_api:$VERSION
 .PHONY: release
