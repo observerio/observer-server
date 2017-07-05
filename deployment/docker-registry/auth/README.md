@@ -6,7 +6,8 @@ If you wish to have the script generate users for you, run `terraform apply` wit
 Importing users
 ---------------
 
-If you have an existing htpasswd file, place it in `auth/htpasswd` and it will be passed to the server, if you wish to generate one from a new set of credentials,
+If you have an existing htpasswd file, place it in `auth/htpasswd` and it will
+be passed to the server, if you wish to generate one from a new set of credentials,
 save a new file, `registry_auth` in the project root, using the format:
 
 ```bash

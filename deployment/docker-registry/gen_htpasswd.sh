@@ -8,12 +8,16 @@ if [ ! -f auth/htpasswd ]; then
     exit 1;
   else
 
-    if [ -s "registry_auth" ]
+    if [ -s "auth/registry_auth" ]
     then
 
-      for cred in `cat registry_auth | awk '{print $2}'`; do
-        echo `docker run --entrypoint htpasswd registry:2 -Bbn \`grep $cred registry_auth | awk '{print $1}'\` $cred` >> auth/htpasswd;
+      echo 'BEGIN generate creds by using registry_auth'
+
+      for cred in `cat auth/registry_auth | awk '{print $2}'`; do
+        echo `docker run --entrypoint htpasswd registry:2 -Bbn \`grep $cred auth/registry_auth | awk '{print $1}'\` $cred` >> auth/htpasswd;
       done
+
+      echo 'DONE generate creds by using registry_auth'
 
     else
       echo "registry_auth file not found." && exit 1;

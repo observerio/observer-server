@@ -50,3 +50,9 @@ watch.server:
 watch.test:
 	docker-compose exec -ti `docker-compose ps -q $(NAME)` /bin/ash -c "watchman-make -p 'lib/**/*.ex' 'test/**/*.exs' 'config/*.exs' 'mix.exs' -t container.test"
 .PHONY: watch.test
+
+release:
+	mix docker.build && mix docker.release
+	docker tag observer_api:$VERSION docker-registry.rubyforce.co:5000/observer/observer_api:$VERSION
+	docker push observer_api:$VERSION
+.PHONY: release

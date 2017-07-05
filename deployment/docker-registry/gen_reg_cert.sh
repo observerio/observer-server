@@ -10,7 +10,7 @@ function generate_registry_keys {
 if [ ! -f certs/registry.key ]; then
   type openssl >/dev/null 2>&1 || { echo >&2 "OpenSSL is required on your local machine to generate the CA."; exit 1; }
 
-  if [ ! -f registry_auth ]; then
+  if [ ! -f auth/registry_auth ]; then
     echo "No registry_auth present"
   else
     generate_registry_keys $@
