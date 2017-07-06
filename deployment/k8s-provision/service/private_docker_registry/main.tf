@@ -17,17 +17,24 @@ resource "null_resource" "certificates" {
 
   provisioner "remote-exec" {
     inline = [
-      "mkdir -p /etc/docker/certs.d/${var.domain}/"
+      "mkdir -p /etc/docker/certs.d/${var.domain}/",
+      "mkdir -p /usr/local/share/ca-certificates/docker-registry/"
     ]
   }
 
   provisioner "file" {
-    source      = "${path.module}/../../../docker-registry/certs/ca.crt"
+    source      = "${path.module}/../../../docker-registry/certs/registry.crt"
     destination = "/etc/docker/certs.d/${var.domain}/ca.crt"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/../../../docker-registry/certs/registry.crt"
+    destination = "/usr/local/share/ca-certificates/docker-registry/ca.crt"
   }
 
   provisioner "remote-exec" {
     inline = [
+      "sudo update-ca-certificates",
       "systemctl restart docker",
     ]
   }
