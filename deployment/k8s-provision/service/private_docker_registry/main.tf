@@ -23,13 +23,13 @@ resource "null_resource" "certificates" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/../../../docker-registry/certs/registry.crt"
+    source      = "${path.module}/../../../docker-registry/certs/ca.crt"
     destination = "/etc/docker/certs.d/${var.domain}/ca.crt"
   }
 
   provisioner "file" {
     source      = "${path.module}/../../../docker-registry/certs/registry.crt"
-    destination = "/usr/local/share/ca-certificates/docker-registry/ca.crt"
+    destination = "/usr/local/share/ca-certificates/docker-registry/registry.crt"
   }
 
   provisioner "remote-exec" {

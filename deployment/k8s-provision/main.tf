@@ -72,15 +72,6 @@ module "firewall" {
   kubernetes_interface = "${module.kubernetes.overlay_interface}"
 }
 
-module "private_docker_registry" {
-  source = "./service/private_docker_registry"
-
-  count = "${var.hosts}"
-  connections = "${module.provider.public_ips}"
-
-  domain = "${var.private_docker_registry_domain}"
-}
-
 module "etcd" {
   source = "./service/etcd"
 
@@ -99,4 +90,13 @@ module "kubernetes" {
   cluster_name   = "${var.domain}"
   vpn_ips        = "${module.wireguard.vpn_ips}"
   etcd_endpoints = "${module.etcd.endpoints}"
+}
+
+module "private_docker_registry" {
+  source = "./service/private_docker_registry"
+
+  count = "${var.hosts}"
+  connections = "${module.provider.public_ips}"
+
+  domain = "${var.private_docker_registry_domain}"
 }
