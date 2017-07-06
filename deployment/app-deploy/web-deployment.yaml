@@ -28,12 +28,5 @@ spec:
           hostIP: 127.0.0.1
         resources: {}
         tty: true
-        volumeMounts:
-        - mountPath: /app
-          name: web-claim0
       restartPolicy: Always
-      volumes:
-      - name: web-claim0
-        persistentVolumeClaim:
-          claimName: web-claim0
 status: {}

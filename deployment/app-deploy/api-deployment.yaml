@@ -19,7 +19,7 @@ spec:
         - name: regsecret
       containers:
       - name: observer-api
-        image: observer_api:0.0.1
+        image: docker-registry.rubyforce.co:5000/observer/observer_api:0.0.1
         args:
           - /bin/ash
           - -c
@@ -42,12 +42,5 @@ spec:
             hostIP: 127.0.0.1
         resources: {}
         tty: true
-        volumeMounts:
-          - mountPath: /app
-            name: api-claim0
       restartPolicy: Always
-      volumes:
-      - name: api-claim0
-        persistentVolumeClaim:
-          claimName: api-claim0
 status: {}

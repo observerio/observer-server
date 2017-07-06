@@ -17,6 +17,7 @@ module "provider" {
   hostname_format = "${var.hostname_format}"
   region          = "${var.digitalocean_region}"
 }
+
 /*
 module "dns" {
   source = "./dns/cloudflare"
@@ -69,6 +70,15 @@ module "firewall" {
   vpn_interface        = "${module.wireguard.vpn_interface}"
   vpn_port             = "${module.wireguard.vpn_port}"
   kubernetes_interface = "${module.kubernetes.overlay_interface}"
+}
+
+module "private_docker_registry" {
+  source = "./service/private_docker_registry"
+
+  count = "${var.hosts}"
+  connections = "${module.provider.public_ips}"
+
+  domain = "${var.private_docker_registry_domain}"
 }
 
 module "etcd" {

@@ -62,3 +62,7 @@ variable "google_managed_zone" {
 variable "google_credentials_file" {
   default = ""
 }
+
+variable "private_docker_registry_domain" {
+  default = ""
+}
