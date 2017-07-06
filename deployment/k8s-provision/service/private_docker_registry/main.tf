@@ -34,7 +34,7 @@ resource "null_resource" "certificates" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo update-ca-certificates",
+      "update-ca-certificates",
       "systemctl restart docker",
     ]
   }
