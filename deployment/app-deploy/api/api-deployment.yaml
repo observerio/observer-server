@@ -20,10 +20,6 @@ spec:
       containers:
       - name: observer-api
         image: docker-registry.rubyforce.co:5000/observer/observer_api:0.0.1
-        args:
-          - /bin/ash
-          - -c
-          - /usr/bin/make server
         name: api
         ports:
           - containerPort: 8080
