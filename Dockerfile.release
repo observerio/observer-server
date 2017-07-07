@@ -17,4 +17,4 @@ RUN chown -R default ./releases
 
 USER default
 
-# ENTRYPOINT ["/opt/app/bin/web"]
+ENTRYPOINT ["/opt/app/bin/web"]
