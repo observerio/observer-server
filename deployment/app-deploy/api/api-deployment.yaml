@@ -16,7 +16,7 @@ spec:
         io.kompose.service: api
     spec:
       imagePullSecrets:
-        - name: docker-registry
+        - name: regsecret
       containers:
       - name: observer-api
         image: docker-registry.rubyforce.co:5000/observer/observer_api:0.0.1
