@@ -1,12 +1,18 @@
 #!/bin/sh
 set -e
 
+echo 'Begin kube admin init'
 kubeadm init --config /tmp/master-configuration.yml
+echo 'Done kube admin init'
 
+echo 'Begin kube admin create token'
 kubeadm token create ${token}
+echo 'Done kube admin create token'
 
+echo 'Begin setup configuration'
 [ -d $HOME/.kube ] || mkdir -p $HOME/.kube
 ln -s /etc/kubernetes/admin.conf $HOME/.kube/config
+echo 'Done setup configuration'
 
 until $(curl --output /dev/null --silent --head --fail http://localhost:6443); do
   echo "Waiting for API server to respond"

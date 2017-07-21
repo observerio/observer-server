@@ -6,6 +6,7 @@ metadata:
     io.kompose.service: api
   name: api
 spec:
+  type: LoadBalancer
   ports:
   - name: "8080"
     port: 8080
