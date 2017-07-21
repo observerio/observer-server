@@ -15,5 +15,5 @@ add-apt-repository \
 
 apt-get update
 apt-get install -y docker-ce
-apt-get install -y kubeadm=1.7.2-00
+apt-get install -y kubeadm=1.7.0-00
 apt-get install -y kubelet kubectl kubernetes-cni
