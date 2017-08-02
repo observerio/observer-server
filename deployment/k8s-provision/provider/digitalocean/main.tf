@@ -36,6 +36,10 @@ provider "digitalocean" {
   token = "${var.token}"
 }
 
+resource "digitalocean_tag" "node_tag" {
+  name = "${var.node_tag}"
+}
+
 resource "digitalocean_droplet" "host" {
   name               = "${format(var.hostname_format, count.index + 1)}"
   region             = "${var.region}"
@@ -44,10 +48,9 @@ resource "digitalocean_droplet" "host" {
   backups            = false
   private_networking = true
   ssh_keys           = ["${split(",", var.ssh_fingerprint)}"]
+  tags               = ["${var.node_tag}"]
 
   count = "${var.hosts}"
-
-  tags = ["${var.node_tag}"]
 
   provisioner "remote-exec" {
     inline = [
