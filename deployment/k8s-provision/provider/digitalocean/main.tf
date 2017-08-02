@@ -62,7 +62,7 @@ resource "digitalocean_droplet" "host" {
 }
 
 resource "digitalocean_loadbalancer" "public" {
-  name = "${format(var.hostname_format, "loadbalancer")}"
+  name = "${format(var.hostname_format, 0)}-loadbalancer"
   region = "${var.region}"
 
   forwarding_rule {
