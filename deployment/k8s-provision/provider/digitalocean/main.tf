@@ -78,8 +78,6 @@ resource "digitalocean_loadbalancer" "public" {
     protocol = "tcp"
   }
 
-  droplet_ids = ["${digitalocean_droplet.host.*.id}"]
-
   droplet_tag = "${var.node_tag}"
 }
 
