@@ -28,6 +28,10 @@ variable "size" {
   default = "1gb"
 }
 
+variable "node_tag" {
+  type = "string"
+}
+
 provider "digitalocean" {
   token = "${var.token}"
 }
@@ -43,6 +47,8 @@ resource "digitalocean_droplet" "host" {
 
   count = "${var.hosts}"
 
+  tags = ["${var.node_tag}"]
+
   provisioner "remote-exec" {
     inline = [
       "until [ -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done",
@@ -50,6 +56,28 @@ resource "digitalocean_droplet" "host" {
       "apt-get install -yq nfs-common",
     ]
   }
+}
+
+resource "digitalocean_loadbalancer" "public" {
+  name = "${format(var.hostname_format, "loadbalancer")}"
+  region = "${var.region}"
+
+  forwarding_rule {
+    entry_port = 80
+    entry_protocol = "http"
+
+    target_port = 80
+    target_protocol = "http"
+  }
+
+  healthcheck {
+    port = 22
+    protocol = "tcp"
+  }
+
+  droplet_ids = ["${digitalocean_droplet.host.*.id}"]
+
+  droplet_tag = "${var.node_tag}"
 }
 
 output "hostnames" {

@@ -16,6 +16,7 @@ module "provider" {
   hosts           = "${var.hosts}"
   hostname_format = "${var.hostname_format}"
   region          = "${var.digitalocean_region}"
+  node_tag        = "${var.digitalocean_tag}"
 }
 
 /*

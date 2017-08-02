@@ -37,6 +37,10 @@ variable "digitalocean_region" {
   default = "nyc1"
 }
 
+variable "digitalocean_tag" {
+  default = "k8s-node"
+}
+
 /* cloudflare */
 variable "cloudflare_email" {
   default = ""
