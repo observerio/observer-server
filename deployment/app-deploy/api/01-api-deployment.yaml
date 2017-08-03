@@ -10,7 +10,7 @@ metadata:
     kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.class: "nginx"
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: Recreate
   template:
@@ -37,4 +37,3 @@ spec:
         resources: {}
         tty: true
       restartPolicy: Always
-status: {}
