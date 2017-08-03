@@ -9,11 +9,14 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 8080
+  - name: "8080"
+    port: 8080
     targetPort: 8080
-  - port: 4001
+  - name: "4001"
+    port: 4001
     targetPort: 4001
-  - port: 6666
+  - name: "6666"
+    port: 6666
     targetPort: 6666
     protocol: TCP
   selector:
