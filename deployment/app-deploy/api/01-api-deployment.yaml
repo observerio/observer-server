@@ -29,11 +29,8 @@ spec:
         args: ["foreground"]
         ports:
           - containerPort: 8080
-            hostIP: 127.0.0.1
           - containerPort: 4001
-            hostIP: 127.0.0.1
           - containerPort: 6666
-            hostIP: 127.0.0.1
         resources: {}
         tty: true
       restartPolicy: Always
