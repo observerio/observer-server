@@ -25,6 +25,7 @@ spec:
       - name: observer-api
         image: docker-registry.rubyforce.co:5000/observer/observer_api:0.0.1
         name: api
+        command: ["/opt/app/bin/web start"]
         ports:
           - containerPort: 8080
             hostIP: 127.0.0.1
