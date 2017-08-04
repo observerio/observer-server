@@ -12,10 +12,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - dashboard.example.com
+    - dashboard.observer.rubyforce.co
     secretName: kubernetes-dashboard-tls
   rules:
-  - host: dashboard.example.com
+  - host: dashboard.observer.rubyforce.co
     http:
       paths:
       - path: /
