@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: kube-lego
-  namespace: kube-lego
+  namespace: ingress
 spec:
   replicas: 1
   template:
@@ -10,6 +10,7 @@ spec:
       labels:
         app: kube-lego
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - name: kube-lego
         image: jetstack/kube-lego:0.1.5

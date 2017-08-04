@@ -61,26 +61,26 @@ resource "digitalocean_droplet" "host" {
   }
 }
 
-resource "digitalocean_loadbalancer" "public" {
-  name = "${format(var.hostname_format, 0)}-loadbalancer"
-  region = "${var.region}"
-
-  forwarding_rule {
-    entry_port = 80
-    entry_protocol = "http"
-
-    target_port = 80
-    target_protocol = "http"
-  }
-
-  healthcheck {
-    port = 22
-    protocol = "tcp"
-  }
-
-  droplet_tag = "${var.node_tag}"
-}
-
+/* resource "digitalocean_loadbalancer" "public" { */
+/*   name = "${format(var.hostname_format, 0)}-loadbalancer" */
+/*   region = "${var.region}" */
+/*  */
+/*   forwarding_rule { */
+/*     entry_port = 80 */
+/*     entry_protocol = "http" */
+/*  */
+/*     target_port = 80 */
+/*     target_protocol = "http" */
+/*   } */
+/*  */
+/*   healthcheck { */
+/*     port = 22 */
+/*     protocol = "tcp" */
+/*   } */
+/*  */
+/*   droplet_tag = "${var.node_tag}" */
+/* } */
+/*  */
 output "hostnames" {
   value = ["${digitalocean_droplet.host.*.name}"]
 }
