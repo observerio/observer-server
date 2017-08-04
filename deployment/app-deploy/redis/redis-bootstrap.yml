@@ -6,6 +6,7 @@ metadata:
     redis-sentinel: "true"
     role: master
   name: redis-master
+  namespace: observer
 spec:
   containers:
     - name: master
@@ -39,6 +40,7 @@ metadata:
     name: sentinel
     role: service
   name: redis-sentinel
+  namespace: observer
 spec:
   ports:
     - port: 26379

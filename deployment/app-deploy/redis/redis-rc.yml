@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   name: redis-sentinel
+  namespace: observer
 spec:
   replicas: 1
   selector:
@@ -26,6 +27,7 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   name: redis
+  namespace: observer
 spec:
   replicas: 1
   selector:
