@@ -55,6 +55,6 @@ watch.test:
 # docker private registry.
 release:
 	mix docker.build && mix docker.release && \
-	docker tag observer_api:release docker-registry.rubyforce.co:5000/observer/observer_api:$VERSION && \
-	docker push docker-registry.rubyforce.co:5000/observer/observer_api:$VERSION
+	docker tag observer_api:release docker-registry.rubyforce.co:5000/observer/observer_api:$(VERSION) && \
+	docker push docker-registry.rubyforce.co:5000/observer/observer_api:$(VERSION)
 .PHONY: release
