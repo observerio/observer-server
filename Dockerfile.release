@@ -9,8 +9,8 @@ EXPOSE 4001
 EXPOSE 6666
 
 ENV WEB_PORT=8080 TCP_PORT=6666 WS_PORT=4001 MIX_ENV=prod REPLACE_OS_VARS=true \
-  SHELL=/bin/sh REDIS_CONNECTION_STRING=redis://127.0.0.1:6379/ \
-  ES_URI=http://127.0.0.1:9200 TCP_ACCEPTORS_SIZE=100
+  SHELL=/bin/sh REDIS_CONNECTION_STRING=redis://redis-master:6379/ \
+  ES_URI=http://elasticsearch:9200 TCP_ACCEPTORS_SIZE=100
 
 ADD web.tar.gz ./
 RUN chown -R default ./releases
