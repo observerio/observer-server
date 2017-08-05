@@ -6,7 +6,7 @@ metadata:
     io.kompose.service: web
   name: web
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: Recreate
   template:
@@ -26,9 +26,14 @@ spec:
             - mountPath: /usr/share/nginx/html
               name: web-app
               readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
         - name: observer-web
-          image: docker-registry.rubyforce.co:5000/observer/observer_web:0.0.1
-          name: web
+          image: docker-registry.rubyforce.co:5000/observer/observer_web:0.0.2
           resources: {}
           tty: true
           volumeMounts:
