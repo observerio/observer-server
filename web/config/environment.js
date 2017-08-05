@@ -55,7 +55,7 @@ module.exports = function(environment) {
   if (environment === 'production') {
     ENV.APP.HOST = "https://observer.rubyforce.co/api";
     ENV.WS = {
-        HOST: "ws://observer.rubyforce.co:4000/api/ws"
+        HOST: "wss://observer.rubyforce.co:4000/api/ws"
     };
   }
 
