@@ -6,7 +6,7 @@ import slice from 'lodash/slice';
 import map from 'lodash/map';
 
 const {get, set} = Ember;
-const {later, bind} = Ember.run;
+const {later} = Ember.run;
 
 const Var = Ember.Object.extend({
   type: null,

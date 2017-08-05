@@ -6,18 +6,12 @@ RUN \
   gcc \
   make \
   git \
-  python
+  python && \
+  rm -rf /var/cache/apk/*
 
 # Install (global) NPM packages/dependencies
 RUN npm install --ignore-optional -g \
   node-gyp \
   pm2 \
-  yarn
-
-# cleanup
-RUN rm -rf /var/cache/apk/*
-
-WORKDIR /app
-
-EXPOSE 4200
-EXPOSE 49153
+  yarn \
+  ember-cli
