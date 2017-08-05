@@ -3,3 +3,5 @@ FROM alpine:3.6
 ADD dist/ /app
 
 WORKDIR /app
+
+CMD ["tail", "-f", "/dev/null"]
