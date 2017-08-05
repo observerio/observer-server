@@ -1,14 +1,14 @@
 use Mix.Config
 
 config :web,
-  ws_port: System.get_env("WS_PORT") || "${WS_PORT}",
+  ws_port: System.get_env("ELIXIR_WS_PORT") || "${ELIXIR_WS_PORT}",
   ws_host: {0, 0, 0, 0},
-  tcp_port: System.get_env("TCP_PORT") || "${TCP_PORT}",
-  tcp_acceptors_size: System.get_env("TCP_ACCEPTORS_SIZE") || "${TCP_ACCEPTORS_SIZE}"
+  tcp_port: System.get_env("ELIXIR_TCP_PORT") || "${ELIXIR_TCP_PORT}",
+  tcp_acceptors_size: System.get_env("ELIXIR_TCP_ACCEPTORS_SIZE") || "${ELIXIR_TCP_ACCEPTORS_SIZE}"
 
 config :maru, Web.Router,
   http: [
-    port: {:system, "WEB_PORT"},
+    port: System.get_env("ELIXIR_WEB_PORT") || "${ELIXIR_WEB_PORT}",
     ip: {0, 0, 0, 0}
   ]
 
