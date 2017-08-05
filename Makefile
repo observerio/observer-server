@@ -53,8 +53,15 @@ watch.test:
 
 # should rebuild image with api erlang app inside and then push it to our
 # docker private registry.
-release:
+api.release:
 	mix docker.build && mix docker.release && \
 	docker tag observer_api:release docker-registry.rubyforce.co:5000/observer/observer_api:$(VERSION) && \
 	docker push docker-registry.rubyforce.co:5000/observer/observer_api:$(VERSION)
+.PHONY: api.release
+
+web.release:
+	cd web/ && make release
+.PHONY: web.release
+
+release: api.release web.release
 .PHONY: release
