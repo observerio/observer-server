@@ -8,7 +8,7 @@ config :web,
 
 config :maru, Web.Router,
   http: [
-    port: System.get_env("WEB_PORT") || "${WEB_PORT}",
+    port: {:system, "WEB_PORT"},
     ip: {0, 0, 0, 0}
   ]
 

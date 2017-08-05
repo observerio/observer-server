@@ -10,14 +10,11 @@ spec:
   - name: http
     port: 80
     targetPort: 8080
-    protocol: TCP
   - name: "4001"
     port: 4001
     targetPort: 4001
-    protocol: TCP
   - name: "6666"
     port: 6666
     targetPort: 6666
-    protocol: TCP
   selector:
     io.kompose.service: api

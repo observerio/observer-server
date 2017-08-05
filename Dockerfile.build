@@ -8,7 +8,7 @@ RUN \
     apk --update upgrade musl && \
     apk --no-cache add \
       git make g++ \
-      elixir@edge=1.4.4-r0 && \
+      elixir && \
     rm -rf /var/cache/apk/*
 
 # Install Hex+Rebar

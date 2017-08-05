@@ -33,11 +33,15 @@ spec:
             initialDelaySeconds: 30
             timeoutSeconds: 30
         - name: observer-web
-          image: docker-registry.rubyforce.co:5000/observer/observer_web:0.0.2
+          image: docker-registry.rubyforce.co:5000/observer/observer_web:0.0.3
           resources: {}
           tty: true
+          lifecycle:
+            postStart:
+              exec:
+                command: ["cp", "-R", "/app/.", "/www"]
           volumeMounts:
-            - mountPath: /app
+            - mountPath: /www
               name: web-app
       restartPolicy: Always
       volumes:
