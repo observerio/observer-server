@@ -1,5 +1,5 @@
 NAME = api
-SERVERS = 162.243.84.159
+DOCKER_PRIVATE_HOST=docker-registry.rubyforce.co:5000
 
 remove: stop
 	docker-compose rm --force
@@ -56,7 +56,7 @@ watch.test:
 api.release:
 	mix docker.build && mix docker.release && \
 	docker tag observer_api:release docker-registry.rubyforce.co:5000/observer/observer_api:$(VERSION) && \
-	docker push docker-registry.rubyforce.co:5000/observer/observer_api:$(VERSION)
+	docker push $(DOCKER_PRIVATE_HOST)/observer/observer_api:$(VERSION)
 .PHONY: api.release
 
 web.release:
