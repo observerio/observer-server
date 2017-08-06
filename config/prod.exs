@@ -20,3 +20,6 @@ config :redis_poolex,
   connection_string: System.get_env("REDIS_CONNECTION_STRING") || "${REDIS_CONNECTION_STRING}"
 
 config :tirexs, :uri, System.get_env("ES_URI") || "${ES_URI}"
+
+# TODO: remove it when we finish with debug
+config :logger, level: :debug
