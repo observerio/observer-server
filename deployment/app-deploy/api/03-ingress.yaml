@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-1
+  namespace: observer
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.org/websocket-services: "api"
+spec:
+  tls:
+  - hosts:
+    - observer.rubyforce.co
+    secretName: observer-tls
+  rules:
+  - host: observer.rubyforce.co
+    http:
+      paths:
+      - path: /api
+        backend:
+          serviceName: api
+          servicePort: http
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-2
+  namespace: observer
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+    nginx.org/websocket-services: "api"
+spec:
+  tls:
+  - hosts:
+    - observer.rubyforce.co
+    secretName: observer-tls
+  rules:
+  - host: observer.rubyforce.co
+    http:
+      paths:
+      - path: /ws
+        backend:
+          serviceName: api
+          servicePort: 4001

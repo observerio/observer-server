@@ -1,0 +1,13 @@
+# Ingress does not support TCP services (yet). For this reason this Ingress
+# controller uses the flag --tcp-services-configmap to point to an existing
+# config map where the key is the external port to use and the value is
+# <namespace/service name>:<service port>:[PROXY] It is possible to use
+# a number or the name of the port. The last field is optional.
+# Adding PROXY in the last field we can enable Proxy Protocol in a TCP service.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-tcp-configmap
+  namespace: observer
+data:
+  6666: "observer/api:6666"
