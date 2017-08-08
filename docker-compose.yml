@@ -59,6 +59,8 @@ services:
       - ./:/app
     environment:
       TCP_HOST: api
+      TCP_PORT: 6667
+      HTTP_HOST: http://api:8080/
     dns:
       - "8.8.8.8"
     networks:

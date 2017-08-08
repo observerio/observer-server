@@ -1,8 +1,8 @@
 #!/bin/sh
 
 HTTP_HOST=${HTTP_HOST:-https://observer.rubyforce.co/api}
-TCP_HOST=observer.rubyforce.co
-TCP_PORT=6666
+TCP_HOST=${TCP_HOST:-observer.rubyforce.co}
+TCP_PORT=${TCP_PORT:-30001}
 
 SLEEP_TIME=20
 COMMAND_SLEEP_TIME=5
