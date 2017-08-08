@@ -23,6 +23,9 @@ spec:
         name: api
         command: ["/opt/app/bin/web"]
         args: ["foreground"]
+        env:
+          - name: REDIS_CONNECTION_STRING
+            value: redis://redis-sentinel:26379/
         ports:
           - containerPort: 8080
           - containerPort: 4001
