@@ -1,6 +1,7 @@
 # Dev
 
 `make build` - run required containers and simulation traffic
+`make rebuild` - remove previous containers and build the new containers
 
 # Web
 

@@ -11,7 +11,14 @@ defmodule Web.Router do
     json_decoder: Poison,
     parsers: [:urlencoded, :json, :multipart]
 
+  if Mix.env == :dev or Mix.env == :test do
+    plug CORSPlug, origin: [
+      "http://localhost:8080",
+      "http://localhost:4200"]
+  end
+
   mount Web.Api.Users
+  mount Web.Api.Status
 
   get "/" do
     data = "public/dist/index.html"

@@ -1,0 +1,11 @@
+<form>
+  {{#each vars as |v|}}
+    <div class='field-{{ v.type }}'>
+      <label form='{{ v.name }}'>{{ v.name }}</label>
+      <input type='text' name='{{ v.name }}' value='{{ v.value }}' />
+      <a {{action "confirm" v}}> Y </a>
+    </div>
+  {{/each}}
+
+  <button {{action "confirmAll"}}> Save All </button>
+</form>

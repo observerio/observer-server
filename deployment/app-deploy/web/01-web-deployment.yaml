@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: observer
+  labels:
+    io.kompose.service: web
+  name: web
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: web
+    spec:
+      imagePullSecrets:
+        - name: regsecret
+      containers:
+        - name: observer-web-nginx
+          image: "nginx"
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html
+              name: web-app
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+        - name: observer-web
+          image: docker-registry.rubyforce.co:5000/observer/observer_web:0.0.10
+          resources: {}
+          tty: true
+          lifecycle:
+            postStart:
+              exec:
+                command: ["cp", "-R", "/app/.", "/www"]
+          volumeMounts:
+            - mountPath: /www
+              name: web-app
+      restartPolicy: Always
+      volumes:
+        - name: web-app
+          emptyDir: {}

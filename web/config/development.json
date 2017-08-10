@@ -1,0 +1,9 @@
+{
+    "APP": {
+        "HOST": "http://localhost:8080/"
+    },
+
+    "WS": {
+        "HOST": "ws://localhost:4000/"
+    }
+}

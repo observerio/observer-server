@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: observer
+  labels:
+    io.kompose.service: api
+  name: api
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: api
+    spec:
+      imagePullSecrets:
+        - name: regsecret
+      containers:
+      - name: observer-api
+        image: docker-registry.rubyforce.co:5000/observer/observer_api:0.0.9
+        name: api
+        command: ["/opt/app/bin/web"]
+        args: ["foreground"]
+        env:
+          - name: REDIS_CONNECTION_STRING
+            value: redis://redis-sentinel:26379/
+        ports:
+          - containerPort: 8080
+          - containerPort: 4001
+          - containerPort: 6666
+        resources: {}
+        tty: true
+        livenessProbe:
+          httpGet:
+            path: /alive
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+      restartPolicy: Always

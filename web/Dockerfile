@@ -6,15 +6,7 @@ RUN \
   gcc \
   make \
   git \
-  python \
-  && git clone https://github.com/sass/sassc \
-  && cd sassc \
-  && git clone https://github.com/sass/libsass \
-  && SASS_LIBSASS_PATH=/sassc/libsass make \
-  && mv /sassc/bin/sassc /usr/bin/sass
-
-# cleanup
-RUN rm -rf /var/cache/apk/* && rm -rf /sassc
+  python
 
 # Install (global) NPM packages/dependencies
 RUN npm install --ignore-optional -g \
@@ -22,6 +14,10 @@ RUN npm install --ignore-optional -g \
   pm2 \
   yarn
 
+# cleanup
+RUN rm -rf /var/cache/apk/*
+
 WORKDIR /app
 
-EXPOSE 5001
+EXPOSE 4200
+EXPOSE 49153

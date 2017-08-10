@@ -1,0 +1,7 @@
+FROM alpine:3.6
+
+COPY dist/ /app
+
+WORKDIR /app
+
+CMD ["tail", "-f", "/dev/null"]

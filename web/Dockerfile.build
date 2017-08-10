@@ -1,0 +1,17 @@
+FROM mhart/alpine-node:7.9.0
+
+RUN \
+  apk add --no-cache \
+  g++ \
+  gcc \
+  make \
+  git \
+  python && \
+  rm -rf /var/cache/apk/*
+
+# Install (global) NPM packages/dependencies
+RUN npm install --ignore-optional -g \
+  node-gyp \
+  pm2 \
+  yarn \
+  ember-cli

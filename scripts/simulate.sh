@@ -1,13 +1,20 @@
 #!/bin/sh
 
-TCP_HOST=${TCP_HOST:-localhost}
-TCP_PORT=6667
-WEB_PORT=8080
+HTTP_HOST=${HTTP_HOST:-https://observer.rubyforce.co/api}
+TCP_HOST=${TCP_HOST:-observer.rubyforce.co}
+TCP_PORT=${TCP_PORT:-30001}
 
-SLEEP_TIME=10
-COMMAND_SLEEP_TIME=2
+SLEEP_TIME=20
+COMMAND_SLEEP_TIME=5
 
-KEY=`curl -H "Content-Type: application/json" -X POST "http://$TCP_HOST:8080/users" -d '{"email":"admin@example.com","password":"123456"}' | jq -r ".auth_key"`
+until $(curl --output /dev/null --silent --fail -X GET $HTTP_HOST/alive); do
+    printf '.'
+    sleep 5
+done
+
+KEY=${KEY:-a250d73fb497}
+# KEY=`curl $HTTP_HOST/users/tokens | jq .token | sed 's/"\([^"]*\)"/\1/'`
+# `curl -H "Content-Type: application/json" -d "'{"token":"'$KEY'"}'" -X POST "http://$HTTP_HOST/api/users/tokens"`
 
 while true
 do
@@ -21,4 +28,3 @@ do
 
   sleep $SLEEP_TIME
 done
-

@@ -1,13 +1,13 @@
 use Mix.Config
 
 config :web,
-  ws_port: 4002,
+  ws_port: "4002",
   ws_host: {0, 0, 0, 0},
-  tcp_port: 6668,
-  tcp_acceptors_size: 100
+  tcp_port: "6668",
+  tcp_acceptors_size: "100"
 
 config :maru, Web.Router,
-  http: [port: 8181, ip: {0, 0, 0, 0}]
+  http: [port: "8181", ip: {0, 0, 0, 0}]
 
 config :redis_poolex,
   reconnect: :no_reconnect,

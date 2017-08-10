@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web
+  namespace: observer
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  - hosts:
+    - observer.rubyforce.co
+    secretName: observer-tls
+  rules:
+  - host: observer.rubyforce.co
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: web
+          servicePort: http
+      - path: /assets
+        backend:
+          serviceName: web
+          servicePort: http

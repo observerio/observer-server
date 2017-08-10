@@ -22,27 +22,34 @@ defmodule Web.Handlers.Dashboard do
   gproc should send here message on push update
   """
   def websocket_info(args, req, state) do
-    {:reply, {:text, inspect(args)}, req, state}
+    {:reply, {:text, Poison.encode!(args)}, req, state}
   end
 
   # Handle other messages from the browser - don't reply
   def websocket_handle({:text, data}, req, state) do
+    Logger.debug("MESSAGE: #{inspect(data)}")
     data |> Poison.decode! |> _process(req, state)
   end
 
   # No matter why we terminate, remove all of this pids subscriptions
   def websocket_terminate(_reason, _req, state) do
-    Logger.info(inspect(state))
+    Logger.debug(inspect(state))
     :ok
   end
 
-  defp _process(%{"event" => "init", "data" => %{"key" => key}}, req, state) do
-    # TODO: do reconnect from client by using init event, websocket should ping
-    # the handlers
-    Pubsub.subscribe("#{key}:vars")
-    Pubsub.subscribe("#{key}:logs")
+  defp _process(%{"event" => "vars", "data" => %{"token" => token, "vars" => vars}}, req, state) do
+    Logger.debug("VARS DATA: #{inspect(vars)}")
 
-    state = %{keys: state[:keys] ++ key}
+    Pubsub.publish("#{token}:vars:callback", %{vars: vars})
+
+    {:ok, req, state}
+  end
+
+  defp _process(%{"event" => "init", "data" => %{"token" => token}}, req, state) do
+    Pubsub.subscribe("#{token}:vars")
+    Pubsub.subscribe("#{token}:logs")
+
+    state = %{keys: state[:keys] ++ token}
 
     {:ok, req, state}
   end

@@ -1,0 +1,22 @@
+FROM bitwalker/alpine-erlang:19.3
+
+RUN apk update && \
+    apk --no-cache --update add libgcc libstdc++ && \
+    rm -rf /var/cache/apk/*
+
+EXPOSE 8080
+EXPOSE 4001
+EXPOSE 6666
+
+ENV REPLACE_OS_VARS=true SHELL=/bin/sh
+
+ENV ELIXIR_WEB_PORT=8080 ELIXIR_TCP_PORT=6666 ELIXIR_WS_PORT=4001 MIX_ENV=prod
+  REDIS_CONNECTION_STRING=redis://redis-sentinel:6379/ \
+  ES_URI=http://elasticsearch:9200 ELIXIR_TCP_ACCEPTORS_SIZE=100
+
+ADD web.tar.gz ./
+RUN chown -R default ./releases
+
+USER default
+
+ENTRYPOINT ["/opt/app/bin/web"]

@@ -1,4 +1,4 @@
-version: "3"
+version: 2
 
 services:
   elasticsearch:
@@ -28,7 +28,7 @@ services:
     networks:
       - back-tier
 
-  observer:
+  api:
     build: ./
     volumes:
       - ./:/app
@@ -37,7 +37,13 @@ services:
     networks:
       - back-tier
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8080:8080" # http
+      - "127.0.0.1:4000:4000" # ws
+      - "127.0.0.1:4001:4001" # ws
+      - "127.0.0.1:4002:4002" # ws
+      - "127.0.0.1:6666:6666" # tcp
+      - "127.0.0.1:6667:6667" # tcp
+      - "127.0.0.1:6668:6668" # tcp
     tty: true
     depends_on:
       - redis
@@ -45,24 +51,26 @@ services:
     links:
       - redis
       - elasticsearch
-    command: /bin/sh make.sh server
+    command: /bin/ash -c "/usr/bin/make server"
 
   simulate:
     build: ./
     volumes:
       - ./:/app
     environment:
-      TCP_HOST: observer
+      TCP_HOST: api
+      TCP_PORT: 6667
+      HTTP_HOST: http://api:8080/
     dns:
       - "8.8.8.8"
     networks:
       - back-tier
     depends_on:
-      - observer
+      - api
     tty: true
     links:
-      - observer
-    command: /bin/sh make.sh simulate
+      - api
+    command: /bin/ash -c "/usr/bin/make simulate"
 
   web:
     build: ./web/
@@ -73,13 +81,14 @@ services:
     networks:
       - back-tier
     depends_on:
-      - observer
+      - api
     tty: true
     ports:
       - "127.0.0.1:4200:4200"
+      - "127.0.0.1:49153:49153"
     links:
-      - observer
-    command: /bin/ash -c "yarn && ./node_modules/bin/ember s"
+      - api
+    command: /bin/ash -c "yarn && ./node_modules/.bin/ember s"
 
 volumes:
   db-data:

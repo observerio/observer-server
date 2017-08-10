@@ -15,7 +15,7 @@ defmodule Web.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger],
+    [extra_applications: [:logger, :poolboy, :ranch, :gproc, :exredis],
      mod: {Web.Application, []}]
   end
 
@@ -40,6 +40,10 @@ defmodule Web.Mixfile do
       {:maru, "~> 0.11"},
       {:redis_poolex, github: "oivoodoo/redis_poolex"},
       {:credo, "~> 0.7", only: [:dev, :test]},
+      {:dogma, "~> 0.1", only: [:dev, :test]},
+      {:cors_plug, "~> 1.2"},
+      {:mix_docker, "~> 0.5.0"},
+      {:poolboy, "~> 1.5"}
     ]
   end
 end

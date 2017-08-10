@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: observer
+  labels:
+    io.kompose.service: api
+  name: api-tcp
+spec:
+  type: NodePort
+  ports:
+  - name: "6666"
+    port: 6666
+    nodePort: 30001
+    protocol: TCP
+  selector:
+    io.kompose.service: api
