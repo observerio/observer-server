@@ -12,9 +12,9 @@ until $(curl --output /dev/null --silent --fail -X GET $HTTP_HOST/alive); do
     sleep 5
 done
 
-KEY=${KEY:-testtesttest}
-KEY=`curl $HTTP_HOST/users/tokens | jq .token | sed 's/"\([^"]*\)"/\1/'`
-`curl -H "Content-Type: application/json" -d "'{"token":"'$KEY'"}'" -X POST "http://$HTTP_HOST/api/users/tokens"`
+KEY=${KEY:-a250d73fb497}
+# KEY=`curl $HTTP_HOST/users/tokens | jq .token | sed 's/"\([^"]*\)"/\1/'`
+# `curl -H "Content-Type: application/json" -d "'{"token":"'$KEY'"}'" -X POST "http://$HTTP_HOST/api/users/tokens"`
 
 while true
 do

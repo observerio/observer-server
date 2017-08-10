@@ -19,3 +19,7 @@ spec:
         backend:
           serviceName: web
           servicePort: http
+      - path: /assets
+        backend:
+          serviceName: web
+          servicePort: http
