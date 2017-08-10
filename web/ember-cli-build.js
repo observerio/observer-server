@@ -9,7 +9,13 @@ module.exports = function(defaults) {
       'bootstrapVersion': 3,
       'importBootstrapFont': true,
       'importBootstrapCSS': true
-    }
+    },
+    // adminLTE: {
+    //   plugins: ['morris', 'icheck', 'datepicker',
+    //     'bootstrap-wysihtml5', 'daterangepicker', 'jvectormap',
+    //     'select2', 'input-mask'
+    //   ]
+    // }
   });
 
   // Use `app.import` to add additional libraries to the generated

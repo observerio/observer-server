@@ -1,6 +1,12 @@
-<h1> DASHBOARD </h1>
+<div class="cont">
+  <div class="demo">
+    <h1>Dashboard</h1>
 
-{{#dashboard-base token=model.token as |db| }}
-  {{dashboard-variables vars=db.v sendMessage=db.sendMessage}}
-  {{dashboard-logger logs=db.l}}
-{{/dashboard-base}}
+    <div class="dashbaord">
+      {{#dashboard-base token=model.token as |db| }}
+        {{dashboard-variables vars=db.v sendMessage=db.sendMessage}}
+        {{dashboard-logger logs=db.l}}
+      {{/dashboard-base}}
+    </div>
+  </div>
+</div>
