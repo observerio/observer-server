@@ -43,7 +43,7 @@ export default Ember.Component.extend({
     socket.on('open', this.openHandler, this);
     socket.on('close', this.closeHandler, this);
     socket.on('message', this.messageHandler, this);
-    this.set('socketClient', socket);
+    set(this, 'socketClient', socket);
   },
 
   willDestroyElement() {
