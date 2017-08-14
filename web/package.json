@@ -36,6 +36,7 @@
     "ember-debug-logger": "^1.0.0",
     "ember-export-application-global": "^2.0.0",
     "ember-fetch": "^2.1.0",
+    "ember-font-awesome": "^3.0.5",
     "ember-load-initializers": "^1.0.0",
     "ember-local-storage": "^1.4.0",
     "ember-lodash": "^4.17.4",

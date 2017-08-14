@@ -15,6 +15,8 @@ export default Ember.Component.extend({
         set(this, 'session.token', model.token);
       }
 
+      // navigate to dashboard page when
+      // we have already logged in
       get(this, 'go')()
     }
   }
