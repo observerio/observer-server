@@ -211,7 +211,7 @@
           </li>
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
-            <a href="#">Sign out</a>
+            {{#signout-button model=model go=(route-action 'signout' model)}}{{/signout-button}}
           </li>
         </ul>
       </div>
