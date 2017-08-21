@@ -1,0 +1,8 @@
+<section class="content">
+  <div class="row">
+    {{#dashboard-base token=model.token as |db| }}
+      {{dashboard-variables vars=db.v sendMessage=db.sendMessage}}
+      {{dashboard-logger logs=db.l}}
+    {{/dashboard-base}}
+  </div>
+</section>

@@ -8,7 +8,9 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('login');
-  this.route('dashboard', { path: '/:token' });
+  this.route('dashboard', { path: '/:token' }, function() {
+    this.route('documentation');
+  });
 });
 
 export default Router;

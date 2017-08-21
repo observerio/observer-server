@@ -1,11 +1,23 @@
-<form>
-  {{#each vars as |v|}}
-    <div class='field-{{ v.type }}'>
-      <label form='{{ v.name }}'>{{ v.name }}</label>
-      <input type='text' name='{{ v.name }}' value='{{ v.value }}' />
-      <a {{action "confirm" v}}> Y </a>
+<div class="col-md-6">
+  <div class='box box-primary'>
+    <div class="box-header with-border">
+      <h3 class="box-title">Variables</h3>
     </div>
-  {{/each}}
 
-  <button {{action "confirmAll"}}> Save All </button>
-</form>
+    <form>
+      <div class="box-body">
+        {{#each vars as |v|}}
+          <div class='field-{{ v.type }} form-group'>
+            <label form='{{ v.name }}'>{{ v.name }}</label>
+            <input type='text' name='{{ v.name }}' value='{{ v.value }}' class="form-control" />
+            <a {{action "confirm" v}}> Y </a>
+          </div>
+        {{/each}}
+      </div>
+
+      <div class='box-footer'>
+        <button class='btn btn-primary' {{action "confirmAll"}}> Save All </button>
+      </div>
+    </form>
+  </div>
+</div>
