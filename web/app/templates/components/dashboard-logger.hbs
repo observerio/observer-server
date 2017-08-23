@@ -5,7 +5,7 @@
     </div>
 
     <form>
-      <div class="box-body">
+      <div class="box-body box-logger">
         {{#each logs key='timestamp' as |l|}}
           <p>{{l.timestamp}} - {{l.message}}</p>
         {{/each}}

@@ -20,6 +20,8 @@ const Log = Ember.Object.extend({
 });
 
 export default Ember.Component.extend({
+  tagName:'',
+
   debug: debugLogger(),
 
   websockets: Ember.inject.service(),

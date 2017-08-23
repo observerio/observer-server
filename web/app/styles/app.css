@@ -1,19 +1,6 @@
-.wrapper {
-    width: 100%;
-    min-height: 100%;
-    height: auto !important;
-    position: absolute;
-}
-
-.content-wrapper{
-    bottom: 50px;
-    position: fixed;
-    width: 100%;
-    top: 50px;
-}
-
-.main-footer{
-    bottom: 0px;
-    position: fixed;
-    width: 100%;
+.box-logger {
+    max-height: 400px;
+    height: 100%;
+    overflow: auto;
+    overflow-x: hidden;
 }

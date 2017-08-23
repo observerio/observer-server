@@ -4,6 +4,8 @@ import { storageFor } from 'ember-local-storage';
 const { set, get } = Ember;
 
 export default Ember.Component.extend({
+  tagName:'',
+
   session: storageFor('session'),
   remember: false,
 
