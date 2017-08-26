@@ -9,8 +9,14 @@
         {{#each vars as |v|}}
           <div class='field-{{ v.type }} form-group'>
             <label form='{{ v.name }}'>{{ v.name }}</label>
-            <input type='text' name='{{ v.name }}' value='{{ v.value }}' class="form-control" />
-            <a {{action "confirm" v}}> Y </a>
+            <div class='input-group'>
+              <input type='text' name='{{ v.name }}' value='{{ v.value }}' class="form-control" />
+              <span class='input-group-btn'>
+                <a {{action "confirm" v}} class='btn btn-default'>
+                  <i class="fa fa-save"></i>
+                </a>
+              </span>
+            </div>
           </div>
         {{/each}}
       </div>
