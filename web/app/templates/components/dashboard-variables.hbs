@@ -12,11 +12,11 @@
           <div class='field-{{ v.type }} form-group'>
             <label for='{{ v.name }}'>{{ v.name }}</label>
             <div class='input-group'>
-              <input
-                type='text'
-                name='{{ v.name }}'
-                value='{{ v.value }}'
-                class="form-control" />
+              {{input
+                type=v.type
+                name=v.name
+                value=v.value
+                class="form-control"}}
               <span class='input-group-btn'>
                 <a {{action "confirm" v}} class='btn btn-default'>
                   <i class="fa fa-save"></i>
@@ -27,12 +27,12 @@
 
           <div class='field-{{ v.type }}-readonly form-group'>
             <div class='input-group'>
-              <input
-                type='text'
-                name='{{ v.readonly.name }}'
-                value='{{ v.readonly.value }}'
+              {{input
+                type=v.readonly.type
+                name=v.readonly.name
+                value=v.readonly.value
                 disabled="disabled"
-                class="form-control" />
+                class="form-control" }}
               <span class='input-group-btn'>
                 <span class='btn btn-default var-readonly'>
                   <i class="fa fa-mobile fa-disabled" aria-hidden="true"></i>
