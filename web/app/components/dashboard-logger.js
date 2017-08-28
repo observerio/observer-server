@@ -5,6 +5,8 @@ const {get, set} = Ember;
 export default Ember.Component.extend({
   tagName:'',
 
+  logs: [],
+
   actions: {
     clearAll: function() {
       const logs = get(this, 'logs');
