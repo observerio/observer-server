@@ -76,7 +76,7 @@ export default Ember.Component.extend({
 
     // Lets mark all the variables to delete to clean up the older
     // variables that out of our context.
-    // TODO: Later move these variables to history table to ensure that 
+    // TODO: Later move these variables to history table to ensure that
     // in case of coming the new variables we should restore the values
     // from the history table.
     vars.forEach((v) => {
