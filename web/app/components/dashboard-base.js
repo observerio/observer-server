@@ -2,8 +2,6 @@ import Ember from 'ember';
 import ENV from 'observer-web-ember/config/environment';
 import debugLogger from 'ember-debug-logger';
 
-import slice from 'lodash/slice';
-
 const {get, set} = Ember;
 const {later} = Ember.run;
 
@@ -128,10 +126,10 @@ export default Ember.Component.extend({
   },
 
   _processLogs(message) {
-    let logs = get(this, 'logs');
+    let logs = Ember.A(get(this, 'logs'));
     logs = logs.concat(message.logs.map((log) => Log.create(log)))
     if (logs.length > this.LOG_HISTORY) {
-      logs = slice(logs, logs.length - this.LOG_HISTORY);
+      logs = logs.slice(logs.length - this.LOG_HISTORY);
     }
     set(this, 'logs', logs);
   },
