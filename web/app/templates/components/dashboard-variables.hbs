@@ -1,16 +1,22 @@
 <div class="col-md-6">
   <div class='box box-primary'>
     <div class="box-header with-border">
-      <h3 class="box-title">Variables</h3>
+      <h3 class="box-title">
+        <i class="fa fa-bug" aria-hidden="true"></i>Variables
+      </h3>
     </div>
 
     <form>
       <div class="box-body">
         {{#each vars as |v|}}
           <div class='field-{{ v.type }} form-group'>
-            <label form='{{ v.name }}'>{{ v.name }}</label>
+            <label for='{{ v.name }}'>{{ v.name }}</label>
             <div class='input-group'>
-              <input type='text' name='{{ v.name }}' value='{{ v.value }}' class="form-control" />
+              <input
+                type='text'
+                name='{{ v.name }}'
+                value='{{ v.value }}'
+                class="form-control" />
               <span class='input-group-btn'>
                 <a {{action "confirm" v}} class='btn btn-default'>
                   <i class="fa fa-save"></i>
@@ -18,11 +24,30 @@
               </span>
             </div>
           </div>
+
+          <div class='field-{{ v.type }}-readonly form-group'>
+            <div class='input-group'>
+              <input
+                type='text'
+                name='{{ v.readonly.name }}'
+                value='{{ v.readonly.value }}'
+                disabled="disabled"
+                class="form-control" />
+              <span class='input-group-btn'>
+                <span class='btn btn-default var-readonly'>
+                  <i class="fa fa-mobile fa-disabled" aria-hidden="true"></i>
+                </span>
+              </span>
+            </div>
+          </div>
         {{/each}}
       </div>
 
       <div class='box-footer'>
-        <button class='btn btn-primary' {{action "confirmAll"}}> Save All </button>
+        <button class='btn btn-primary pull-right' {{action "confirmAll"}}>
+          <i class="fa fa-save"></i>
+          Save All
+        </button>
       </div>
     </form>
   </div>

@@ -3,7 +3,6 @@ import ENV from 'observer-web-ember/config/environment';
 import debugLogger from 'ember-debug-logger';
 
 import slice from 'lodash/slice';
-import map from 'lodash/map';
 
 const {get, set} = Ember;
 const {later} = Ember.run;
@@ -75,22 +74,56 @@ export default Ember.Component.extend({
   },
 
   _processVars(message) {
-    let vars = message.vars.reduce((vars, v, index) => {
+    let vars = Ember.A(get(this, 'vars'));
+
+    // Lets mark all the variables to delete to clean up the older
+    // variables that out of our context.
+    // TODO: Later move these variables to history table to ensure that 
+    // in case of coming the new variables we should restore the values
+    // from the history table.
+    vars.forEach((v) => {
+      v.deleteRecord = true;
+      v.newRecord = false;
+    })
+
+    Ember.A(message.vars).forEach((v, index) => {
       // [key1, value1, key2, value2]
       if (index % 2 == 0) {
         let values = v.split(':');
         let name = values[0];
         let property = values[1];
-        if (Ember.isBlank(vars[name])) {
-          vars[name] = vars[name] || {};
-          vars[name].name = name;
-        }
-        vars[name][property] = message.vars[index + 1];
-      }
-      return vars;
-    }, {});
 
-    vars = map(vars, (value, key) => Var.create(vars[key]))
+        let o = vars.findBy('name', name);
+        if (Ember.isBlank(o)) {
+          let attributes = {
+            name: name,
+            readonly: {
+              name: `${name}_readonly`
+            },
+            deleteRecord: false,
+            newRecord: true
+          };
+          attributes[property] = message.vars[index + 1];
+          attributes.readonly[property] = message.vars[index + 1];
+
+          let newVar = Var.create(attributes);
+          vars.push(newVar);
+        } else {
+          // in case if we have new record we should set the other properties like value
+          // that's coming after the var creation in the block above.
+          if (o.get('newRecord')) {
+            o.set(property, message.vars[index + 1]);
+          }
+          o.set(`readonly.${property}`, message.vars[index + 1]);
+          o.set('deleteRecord', false);
+        }
+      }
+
+      return vars;
+    });
+
+    vars = vars.rejectBy('deleteRecord', true);
+
     set(this, 'vars', vars);
   },
 

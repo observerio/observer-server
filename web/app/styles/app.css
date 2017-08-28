@@ -4,3 +4,17 @@
     overflow: auto;
     overflow-x: hidden;
 }
+
+.btn.var-readonly {
+    width: 38px;
+    cursor: not-allowed;
+}
+
+.fa-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+h3 > .fa, button > .fa {
+    padding-right: 5px;
+}
