@@ -2286,7 +2286,7 @@ ember-cli-shims@^1.1.0:
     ember-cli-version-checker "^1.2.0"
     silent-error "^1.0.1"
 
-ember-cli-spinner@^0.0.9:
+ember-cli-spinner@0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/ember-cli-spinner/-/ember-cli-spinner-0.0.9.tgz#83ae3fa02c2a79c046e5c5e349e7ddb963aea261"
   dependencies:
