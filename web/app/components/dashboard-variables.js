@@ -13,6 +13,8 @@ export default Ember.Component.extend({
   // variables
   vars: [],
 
+  isButtonDisabled: Ember.computed.equal('vars.length', 0),
+
   didInsertElement() {
     this._super(...arguments);
     this.get('spinner').show('dashboard-vars-spinner');

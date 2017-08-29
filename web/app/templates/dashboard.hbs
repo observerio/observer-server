@@ -16,26 +16,26 @@
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <!-- Notifications: style can be found in dropdown.less -->
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <!-- <li class="footer"><a href="#">View all</a></li> -->
-            </ul>
-          </li>
+          <!-- <li class="dropdown notifications&#45;menu"> -->
+          <!--   <a href="#" class="dropdown&#45;toggle" data&#45;toggle="dropdown"> -->
+          <!--     <i class="fa fa&#45;bell&#45;o"></i> -->
+          <!--     <span class="label label&#45;warning">10</span> -->
+          <!--   </a> -->
+            <!-- <ul class="dropdown&#45;menu"> -->
+            <!--   <li class="header">You have 10 notifications</li> -->
+            <!--   <li> -->
+            <!--     <!&#45;&#45; inner menu: contains the actual data &#45;&#45;> -->
+            <!--     <ul class="menu"> -->
+            <!--       <li> -->
+            <!--         <a href="#"> -->
+            <!--           <i class="fa fa&#45;users text&#45;aqua"></i> 5 new members joined today -->
+            <!--         </a> -->
+            <!--       </li> -->
+            <!--     </ul> -->
+            <!--   </li> -->
+            <!--   <!&#45;&#45; <li class="footer"><a href="#">View all</a></li> &#45;&#45;> -->
+            <!-- </ul> -->
+          <!-- </li> -->
           <li class="dropdown user user-menu">
             {{#signout-button model=model go=(route-action 'signout' model)}}{{/signout-button}}
           </li>
@@ -50,6 +50,12 @@
     <section class="sidebar">
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
+        <li>
+          {{#link-to "dashboard" model}}
+            <i class="fa fa-dashboard"></i>
+            <span>Dashboard</span>
+          {{/link-to}}
+        </li>
         <li>
           {{#link-to "dashboard.documentation" model}}
             <i class="fa fa-book"></i>

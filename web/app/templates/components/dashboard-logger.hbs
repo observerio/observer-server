@@ -17,7 +17,9 @@
       </div>
 
       <div class='box-footer'>
-        <button class='btn btn-primary pull-right' {{action "clearAll"}}>
+        <button class='btn btn-primary pull-right'
+          disabled={{isButtonDisabled}}
+          {{action "clearAll"}}>
           <i class="fa fa-trash-o"></i>
           Clear All
         </button>

@@ -17,6 +17,13 @@ export default Ember.Route.extend({
       let session = get(this, 'session');
       set(session, 'token', null);
       this.transitionTo('login');
+    },
+
+    didTransition() {
+      Ember.run.schedule("afterRender",this,function() {
+        Ember.$.AdminLTE.layout.fix();
+      });
+      return true;
     }
-  }
+  },
 });

@@ -9,6 +9,8 @@ export default Ember.Component.extend({
 
   logs: [],
 
+  isButtonDisabled: Ember.computed.equal('logs.length', 0),
+
   didInsertElement() {
     this._super(...arguments);
     this.get('spinner').show('dashboard-logs-spinner');
