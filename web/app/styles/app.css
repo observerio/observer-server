@@ -18,3 +18,7 @@
 h3 > .fa, button > .fa {
     padding-right: 5px;
 }
+
+.ember-cli-spinner {
+  position: relative;
+}

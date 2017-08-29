@@ -8,6 +8,9 @@
 
     <form>
       <div class="box-body">
+        {{ember-cli-spinner id="dashboard-vars-spinner" type="wave" height="20px"
+          width="50px" bgColor="transparent" color="dark-red"}}
+
         {{#each vars as |v|}}
           <div class='field-{{ v.type }} form-group'>
             <label for='{{ v.name }}'>{{ v.name }}</label>

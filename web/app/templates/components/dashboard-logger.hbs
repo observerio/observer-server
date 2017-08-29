@@ -8,6 +8,9 @@
 
     <form>
       <div class="box-body box-logger">
+        {{ember-cli-spinner id="dashboard-logs-spinner" type="wave" height="20px"
+          width="50px" bgColor="transparent" color="dark-red"}}
+
         {{#each logs key='timestamp' as |l|}}
           <p>{{l.timestamp}} - {{l.message}}</p>
         {{/each}}
