@@ -33,7 +33,7 @@ spec:
             initialDelaySeconds: 30
             timeoutSeconds: 30
         - name: observer-web
-          image: docker-registry.rubyforce.co:5000/observer/observer_web:0.0.13
+          image: docker-registry.rubyforce.co:5000/observer/observer_web:0.0.14
           resources: {}
           tty: true
           lifecycle:
