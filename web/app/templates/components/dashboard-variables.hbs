@@ -1,11 +1,57 @@
-<form>
-  {{#each vars as |v|}}
-    <div class='field-{{ v.type }}'>
-      <label form='{{ v.name }}'>{{ v.name }}</label>
-      <input type='text' name='{{ v.name }}' value='{{ v.value }}' />
-      <a {{action "confirm" v}}> Y </a>
+<div class="col-md-6">
+  <div class='box box-primary'>
+    <div class="box-header with-border">
+      <h3 class="box-title">
+        <i class="fa fa-bug" aria-hidden="true"></i>Variables
+      </h3>
     </div>
-  {{/each}}
 
-  <button {{action "confirmAll"}}> Save All </button>
-</form>
+    <form>
+      <div class="box-body">
+        {{ember-cli-spinner id="dashboard-vars-spinner" type="wave" height="20px"
+          width="50px" bgColor="transparent" color="dark-red"}}
+
+        {{#each vars as |v|}}
+          <div class='field-{{ v.type }} form-group'>
+            <label for='{{ v.name }}'>{{ v.name }}</label>
+            <div class='input-group'>
+              {{input
+                type=v.type
+                name=v.name
+                value=v.value
+                class="form-control"}}
+              <span class='input-group-btn'>
+                <a {{action "confirm" v}} class='btn btn-default'>
+                  <i class="fa fa-save"></i>
+                </a>
+              </span>
+            </div>
+          </div>
+
+          <div class='field-{{ v.type }}-readonly form-group'>
+            <div class='input-group'>
+              {{input
+                type=v.readonly.type
+                name=v.readonly.name
+                value=v.readonly.value
+                disabled="disabled"
+                class="form-control" }}
+              <span class='input-group-btn'>
+                <span class='btn btn-default var-readonly'>
+                  <i class="fa fa-mobile fa-disabled" aria-hidden="true"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+
+      <div class='box-footer'>
+        <button class='btn btn-primary pull-right' {{action "confirmAll"}}>
+          <i class="fa fa-save"></i>
+          Save All
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

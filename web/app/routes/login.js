@@ -7,5 +7,11 @@ export default Ember.Route.extend({
     return fetch(`${ENV.APP.HOST}/users/tokens`)
       .then((response) => response.json())
       .catch((error) => Ember.Logger.error(error));
+  },
+
+  actions: {
+    login: function(model) {
+      this.transitionTo("dashboard", model);
+    }
   }
 });

@@ -1,3 +1,27 @@
-{{#each logs key='timestamp' as |l|}}
-  <p>{{l.timestamp}} - {{l.message}}</p>
-{{/each}}
+<div class="col-md-6">
+  <div class='box box-primary'>
+    <div class="box-header with-border">
+      <h3 class="box-title">
+        <i class="fa fa-history" aria-hidden="true"></i>Logger
+      </h3>
+    </div>
+
+    <form>
+      <div class="box-body box-logger">
+        {{ember-cli-spinner id="dashboard-logs-spinner" type="wave" height="20px"
+          width="50px" bgColor="transparent" color="dark-red"}}
+
+        {{#each logs key='timestamp' as |l|}}
+          <p>{{l.timestamp}} - {{l.message}}</p>
+        {{/each}}
+      </div>
+
+      <div class='box-footer'>
+        <button class='btn btn-primary pull-right' {{action "clearAll"}}>
+          <i class="fa fa-trash-o"></i>
+          Clear All
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

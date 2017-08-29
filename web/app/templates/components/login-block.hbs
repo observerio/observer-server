@@ -1,0 +1,30 @@
+<div class="login-box">
+  {{logo-block}}
+
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+    <p class="login-box-msg">Sign in to start your session</p>
+
+    <form>
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" value={{model.token}} required=true disabled="disabled" placeholder="Token"/>
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="checkbox icheck">
+            <label>
+              {{input type="checkbox" checked=remember}} Remember Me
+            </label>
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-4">
+          <a {{action "login" model}} class="btn btn-primary btn-block btn-flat">Start</a>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+  </div>
+  <!-- /.login-box-body -->
+</div>

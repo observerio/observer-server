@@ -8,4 +8,5 @@ release:
 	docker push docker-registry.rubyforce.co:5000/observer/observer_web:$(VERSION) && \
 	docker tag observer_web:release docker-registry.rubyforce.co:5000/observer/observer_web:latest && \
 	docker push docker-registry.rubyforce.co:5000/observer/observer_web:latest
+	kubectl apply -f ../deployment/app-deploy/web
 .PHONY: release

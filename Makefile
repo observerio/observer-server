@@ -59,6 +59,7 @@ api.release:
 	docker push $(DOCKER_PRIVATE_HOST)/observer/observer_api:$(VERSION) && \
 	docker tag observer_api:release docker-registry.rubyforce.co:5000/observer/observer_api:latest && \
 	docker push $(DOCKER_PRIVATE_HOST)/observer/observer_api:latest
+	kubectl apply -f deployment/app-deploy/api
 .PHONY: api.release
 
 web.release:
