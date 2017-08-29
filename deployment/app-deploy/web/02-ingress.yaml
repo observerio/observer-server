@@ -23,3 +23,7 @@ spec:
         backend:
           serviceName: web
           servicePort: http
+      - path: /fonts
+        backend:
+          serviceName: web
+          servicePort: http
