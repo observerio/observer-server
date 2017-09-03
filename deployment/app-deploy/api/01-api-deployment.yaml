@@ -19,7 +19,7 @@ spec:
         - name: regsecret
       containers:
       - name: observer-api
-        image: docker-registry.rubyforce.co:5000/observer/observer_api:0.0.14
+        image: docker-registry.rubyforce.co:5000/observer/observer_api:0.0.15
         name: api
         command: ["/opt/app/bin/web"]
         args: ["foreground"]
