@@ -191,9 +191,6 @@ defmodule Web.Tcp.Handler do
         Process.exit(self(), :kill)
       message ->
         Logger.debug("[tcp.handler] message on receive block: #{inspect(message)}")
-    after @timeout ->
-      Logger.debug("[tcp.handler] received timeout on processing messages from transport")
-      loop(socket, transport, acc)
     end
   end
 

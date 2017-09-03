@@ -18,6 +18,8 @@ TODO: use http://127.0.0.1:8080/
 # TODO:
 
 - [ ] add jwt.io
+- [ ] add tcp client and integrate it to the unity by using native library load
+- [ ] add tcp
 
 
 # Routes
