@@ -23,5 +23,7 @@ defmodule Web.Api.UsersTest do
   end
 
   test "use tokens for register new users despite on missing email" do
+    response = conn(:post, "/users/tokens", %{token: "testing"}) |> make_response
+    assert response.status == 200
   end
 end
