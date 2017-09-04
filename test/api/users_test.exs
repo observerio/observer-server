@@ -1,3 +1,8 @@
+defmodule Web.RouterTest do
+  use ExUnit.Case
+  use Maru.Test, for: Web.Router
+end
+
 defmodule Web.Api.UsersTest do
   use ExUnit.Case
   doctest Web.Api.Users
@@ -9,6 +14,7 @@ defmodule Web.Api.UsersTest do
 
   setup do
     RedisPoolex.query(["FLUSHDB"])
+    :ok
   end
 
   test "tokens generation for new users" do

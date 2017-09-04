@@ -3,6 +3,9 @@ defmodule Web.Api.Users do
 
   alias Web.Db.Users
 
+  require Logger
+  require IEx
+
   namespace :users do
     params do
       requires :email, type: String
@@ -33,11 +36,19 @@ defmodule Web.Api.Users do
         requires :token, type: String
       end
       post do
+        IEx.pry
+
+        Logger.debug("[/users/tokens] params: #{inspect(params)}")
+
         token = params[:token]
 
+        Logger.debug("[/users/tokens] received token: #{token}")
+
         if Users.exists?(%{token: params[:token]}) do
+          Logger.debug("[/users/tokens] user exists by token: #{token}")
           json(conn, with_token(token))
         else
+          Logger.debug("[/users/tokens] register user by token: #{token}")
           {:ok, _} = Users.register(%{token: token})
           json(conn, with_token(token))
         end

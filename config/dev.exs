@@ -17,3 +17,5 @@ config :redis_poolex,
   connection_string: "redis://observer_redis:6379/"
 
 config :tirexs, :uri, "http://elastic:changeme@observer_elasticsearch:9200"
+
+config :logger, level: :debug

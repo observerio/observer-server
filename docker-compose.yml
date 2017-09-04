@@ -5,7 +5,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.3.1
     container_name: observer_elasticsearch
     ports:
-      - 9200
+      - "127.0.0.1:9200:9200"
     networks:
       - back-tier
     ulimits:
@@ -24,7 +24,7 @@ services:
     image: redis:alpine
     container_name: observer_redis
     ports:
-      - 6379
+      - "127.0.0.1:6379:6379"
     networks:
       - back-tier
 
@@ -52,6 +52,11 @@ services:
       - redis
       - elasticsearch
     command: /bin/ash -c "/usr/bin/make server"
+    logging:
+      driver: json-file
+      options:
+        max-size: "20k"
+        max-file: "10"
 
   simulate:
     build: ./

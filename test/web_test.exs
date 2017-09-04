@@ -1,4 +1,4 @@
 defmodule WebTest do
   use ExUnit.Case
-  doctest Web
+  doctest Web.Api
 end
