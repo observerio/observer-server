@@ -4,7 +4,6 @@ defmodule Web.Api.Users do
   alias Web.Db.Users
 
   require Logger
-  require IEx
 
   namespace :users do
     params do
@@ -36,8 +35,6 @@ defmodule Web.Api.Users do
         requires :token, type: String
       end
       post do
-        IEx.pry
-
         Logger.debug("[/users/tokens] params: #{inspect(params)}")
 
         token = params[:token]
