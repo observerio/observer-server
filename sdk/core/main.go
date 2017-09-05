@@ -160,12 +160,13 @@ func Init(key string) *clientStr {
 }
 
 func encode(attributes interface{}) (string, error) {
-	jsonBytes, err := ffjson.Marshal(attributes)
+	buf, err := ffjson.Marshal(attributes)
+	defer ffjson.Pool(buf)
 	if err != nil {
 		return "", err
 	}
 
-	return base64.StdEncoding.EncodeToString(jsonBytes), nil
+	return base64.StdEncoding.EncodeToString(buf), nil
 }
 
 // Log should send log message directly to client depends on logging level.
