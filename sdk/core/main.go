@@ -3,12 +3,12 @@ package main
 import (
 	"bufio"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"net"
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/pquerna/ffjson/ffjson"
 )
 
 // const defaultHost = "observer.rubyforce.co:30001"
@@ -22,7 +22,7 @@ const logCommand = "l"
 var timeoutReadErr error
 
 func init() {
-	timeoutReadErr := errors.New("timeout on receiving response from tcp server")
+	timeoutReadErr = errors.New("timeout on receiving response from tcp server")
 }
 
 // Version should be populated on running build
@@ -56,11 +56,11 @@ func withRecover(fn func()) {
 }
 
 func logResponse(resp response) {
-	fmt.Printf("[log] response: %v", resp)
+	fmt.Printf("[log] response: %v\n", resp)
 }
 
 func logError(err error) {
-	fmt.Printf("[log] error: %v", err)
+	fmt.Printf("[log] error: %v\n", err)
 }
 
 // clientStr is tcp client for talking with observer server.
@@ -160,7 +160,7 @@ func Init(key string) *clientStr {
 }
 
 func encode(attributes interface{}) (string, error) {
-	jsonBytes, err := json.Marshal(attributes)
+	jsonBytes, err := ffjson.Marshal(attributes)
 	if err != nil {
 		return "", err
 	}
