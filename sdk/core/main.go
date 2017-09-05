@@ -17,6 +17,14 @@ const verifyCommand = "v"
 const varCommand = "i"
 const logCommand = "l"
 
+// timeoutReadErr happened in case if it's impossible to read
+// data from tcp server.
+var timeoutReadErr error
+
+func init() {
+	timeoutReadErr := errors.New("timeout on receiving response from tcp server")
+}
+
 // Version should be populated on running build
 const Version = "0.0.1"
 
@@ -67,10 +75,20 @@ type clientStr struct {
 
 	responses        chan response
 	responsesHandler func(resp response)
+
+	// requests chan collecting to buffer requests
+	// and then in case of available connection
+	// pushing values step by step to tcp server.
+	requests     chan request
+	requestsBuff []*request
 }
 
 type response struct {
 	data string
+}
+
+type request struct {
+	messages interface{}
 }
 
 type logStr struct {
@@ -224,7 +242,7 @@ func (client *clientStr) send(message string) error {
 	case err := <-errorsChan:
 		client.errors <- err
 	case <-time.After(time.Second * 5):
-		client.errors <- errors.New("timeout on receiving response from tcp server")
+		client.errors <- timeoutReadErr
 	}
 
 	return err
@@ -268,10 +286,10 @@ func (client *clientStr) auth() {
 func main() {
 	client = Init("55278729d2f1")
 
-	client.Var("string", "example1", "value1")
-	client.Log(LogDebug, "loggin something")
-
 	for {
 		time.Sleep(10 * time.Second)
+		client.Var("string", "example1", "value1")
+		time.Sleep(10 * time.Second)
+		client.Log(LogDebug, "loggin something")
 	}
 }
