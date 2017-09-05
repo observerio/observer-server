@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net"
 	"time"
 
@@ -31,9 +30,8 @@ var client *clientStr
 // panicHandler should handle the situations when our client died because of
 // internal issues.
 func panicHandler(err interface{}) {
-	// TODO: write custom panic handler, it should be possible to override it
-	// outside of the core library.
-	log.Fatal(err)
+	fmt.Printf("panic err: %v", err)
+	client.reconnect()
 }
 
 func withRecover(fn func()) {
@@ -50,7 +48,11 @@ func withRecover(fn func()) {
 }
 
 func logResponse(resp response) {
-	fmt.Print(resp)
+	fmt.Printf("[log] response: %v", resp)
+}
+
+func logError(err error) {
+	fmt.Printf("[log] error: %v", err)
 }
 
 // clientStr is tcp client for talking with observer server.
@@ -102,7 +104,8 @@ func Init(key string) *clientStr {
 			host:        defaultHost,
 			key:         key,
 		},
-		errors: make(chan error),
+		errors:        make(chan error),
+		errorsHandler: logError,
 
 		responses:        make(chan response),
 		responsesHandler: logResponse,
