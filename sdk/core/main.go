@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"bufio"
@@ -282,15 +282,4 @@ func (client *clientStr) reconnect() {
 
 func (client *clientStr) auth() {
 	client.sendMessage(verifyCommand, "")
-}
-
-func main() {
-	client = Init("55278729d2f1")
-
-	for {
-		time.Sleep(10 * time.Second)
-		client.Var("string", "example1", "value1")
-		time.Sleep(10 * time.Second)
-		client.Log(LogDebug, "loggin something")
-	}
 }
