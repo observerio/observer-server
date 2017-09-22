@@ -12,8 +12,7 @@ import (
 	"github.com/pquerna/ffjson/ffjson"
 )
 
-// const defaultHost = "observer.rubyforce.co:30001"
-const defaultHost = "localhost:6667"
+const defaultHost = "observer.rubyforce.co:30001"
 const verifyCommand = "v"
 const varCommand = "i"
 const logCommand = "l"
@@ -116,6 +115,14 @@ type confStr struct {
 // - should have buffer in case of reconnection to the server
 // - should handle situations when it can't send the traffic to server
 func Init(key string) *clientStr {
+	return newClient(key, defaultHost)
+}
+
+func InitWithHost(key string, host string) *clientStr {
+	return newClient(key, host)
+}
+
+func newClient(key string, host string) *clientStr {
 	log.SetOutput(os.Stdout)
 
 	client := &clientStr{
