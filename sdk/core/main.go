@@ -129,7 +129,7 @@ func newClient(key string, host string) *clientStr {
 		conf: &confStr{
 			dialTimeout: 2 * time.Minute,
 			keepAlive:   5 * time.Minute,
-			host:        defaultHost,
+			host:        host,
 			key:         key,
 		},
 		errors:        make(chan error),
