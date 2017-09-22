@@ -3,8 +3,9 @@ package core
 import (
 	"bufio"
 	"encoding/base64"
-	"fmt"
+	"log"
 	"net"
+	"os"
 	"time"
 
 	"github.com/pkg/errors"
@@ -38,7 +39,7 @@ var client *clientStr
 // panicHandler should handle the situations when our client died because of
 // internal issues.
 func panicHandler(err interface{}) {
-	fmt.Printf("panic err: %v", err)
+	log.Printf("panic err: %v", err)
 	client.reconnect()
 }
 
@@ -56,11 +57,11 @@ func withRecover(fn func()) {
 }
 
 func logResponse(resp response) {
-	fmt.Printf("[log] response: %v\n", resp)
+	log.Printf("[log] response: %v\n", resp)
 }
 
 func logError(err error) {
-	fmt.Printf("[log] error: %v\n", err)
+	log.Printf("[log] error: %v\n", err)
 }
 
 // clientStr is tcp client for talking with observer server.
@@ -115,6 +116,8 @@ type confStr struct {
 // - should have buffer in case of reconnection to the server
 // - should handle situations when it can't send the traffic to server
 func Init(key string) *clientStr {
+	log.SetOutput(os.Stdout)
+
 	client := &clientStr{
 		conf: &confStr{
 			dialTimeout: 2 * time.Minute,
@@ -200,28 +203,28 @@ func (client *clientStr) isConnected() bool {
 
 func (client *clientStr) sendMessage(command string, message string) {
 	if message == "" {
-		client.send(fmt.Sprintf("%s:%s\n", command, client.conf.key))
+		client.send(log.Sprintf("%s:%s\n", command, client.conf.key))
 	} else {
-		client.send(fmt.Sprintf("%s:%s:%s\n", command, client.conf.key, message))
+		client.send(log.Sprintf("%s:%s:%s\n", command, client.conf.key, message))
 	}
 }
 
 func (client *clientStr) send(message string) error {
 	var err error
 
-	fmt.Printf("[client.send] begin write connection: %v, message: '%s'\n", client.conn, message)
+	log.Printf("[client.send] begin write connection: %v, message: '%s'\n", client.conn, message)
 	_, err = client.conn.Write([]byte(message))
 	if err != nil {
 		client.errors <- errors.Wrap(err, "conn can't write message via socket")
 		return err
 	}
-	fmt.Printf("[client.send] done write message: '%s'\n", message)
+	log.Printf("[client.send] done write message: '%s'\n", message)
 
 	responsesChan := make(chan response, 1)
 	errorsChan := make(chan error, 1)
 
 	go func() {
-		fmt.Printf("[client.send] begin running reader from tcp server message: '%s'\n", message)
+		log.Printf("[client.send] begin running reader from tcp server message: '%s'\n", message)
 		buf := bufio.NewReader(client.conn)
 		for {
 			str, err := buf.ReadString('\n')
@@ -234,7 +237,7 @@ func (client *clientStr) send(message string) error {
 				break
 			}
 		}
-		fmt.Printf("[client.send] done running reader from tcp server message: '%s'\n", message)
+		log.Printf("[client.send] done running reader from tcp server message: '%s'\n", message)
 	}()
 
 	select {
@@ -251,7 +254,7 @@ func (client *clientStr) send(message string) error {
 
 func (client *clientStr) connect() {
 	if client.conn == nil {
-		fmt.Printf("[client.connect] begin connect to tcp server: '%s'\n", client.conf.host)
+		log.Printf("[client.connect] begin connect to tcp server: '%s'\n", client.conf.host)
 		dialer := net.Dialer{
 			Timeout:   client.conf.dialTimeout,
 			KeepAlive: client.conf.keepAlive,
@@ -266,11 +269,11 @@ func (client *clientStr) connect() {
 			// - should have number of retries on connecting to host.
 			panic(client.connErr)
 		}
-		fmt.Printf("[client.connect] done connect to tcp server: '%s'\n", client.conf.host)
+		log.Printf("[client.connect] done connect to tcp server: '%s'\n", client.conf.host)
 
-		fmt.Printf("[client.connect] begin auth: '%s'\n", client.conf.host)
+		log.Printf("[client.connect] begin auth: '%s'\n", client.conf.host)
 		client.auth()
-		fmt.Printf("[client.connect] done auth: '%s'\n", client.conf.host)
+		log.Printf("[client.connect] done auth: '%s'\n", client.conf.host)
 	}
 }
 
