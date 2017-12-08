@@ -82,7 +82,7 @@ export default Ember.Component.extend({
     vars.forEach((v) => {
       v.deleteRecord = true;
       v.newRecord = false;
-    })
+    });
 
     Ember.A(message.vars).forEach((v, index) => {
       // [key1, value1, key2, value2]
@@ -127,7 +127,8 @@ export default Ember.Component.extend({
 
   _processLogs(message) {
     let logs = Ember.A(get(this, 'logs'));
-    logs = logs.concat(message.logs.map((log) => Log.create(log)))
+    logs = logs.concat(message.logs.map((log) => Log.create(log)));
+
     if (logs.length > this.LOG_HISTORY) {
       logs = logs.slice(logs.length - this.LOG_HISTORY);
     }
@@ -135,7 +136,7 @@ export default Ember.Component.extend({
   },
 
   messageHandler(event) {
-    const message = this._processMessage(event.data)
+    const message = this._processMessage(event.data);
 
     switch(message.type) {
       case 'logs': {
@@ -159,7 +160,7 @@ export default Ember.Component.extend({
 
       this.debug(message);
       const socket = get(this, 'socketClient');
-      socket.send(JSON.stringify(message))
+      socket.send(JSON.stringify(message));
     }
   }
 });
