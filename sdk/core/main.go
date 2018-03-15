@@ -3,10 +3,15 @@ package core
 import (
 	"bufio"
 	"encoding/base64"
-	"log"
+	"fmt"
 	"net"
 	"os"
 	"time"
+
+	"github.com/avast/retry-go"
+
+	"github.com/apex/log"
+	"github.com/apex/log/handlers/text"
 
 	"github.com/pkg/errors"
 	"github.com/pquerna/ffjson/ffjson"
@@ -16,6 +21,21 @@ const defaultHost = "observer.rubyforce.co:30001"
 const verifyCommand = "v"
 const varCommand = "i"
 const logCommand = "l"
+
+type errConnection struct {
+	err error
+}
+
+func (errConnection) RetryTime() time.Duration {
+	return 2 * time.Minute
+}
+
+func (e errConnection) Error() string {
+	return e.err.Error()
+}
+
+// ErrConnection should happen in case if it's impossible to connect
+var ErrConnection = errConnection{err: errors.New("can't connect to the server")}
 
 // timeoutReadErr happened in case if it's impossible to read
 // data from tcp server.
@@ -33,12 +53,12 @@ const LogDebug = 1
 
 // client is globally accessible to ensure possibility to restore
 // access to tcp server.
-var client *clientStr
+var client *ClientStr
 
 // panicHandler should handle the situations when our client died because of
 // internal issues.
 func panicHandler(err interface{}) {
-	log.Printf("panic err: %v", err)
+	log.Debugf("panic err: %v", err)
 	client.reconnect()
 }
 
@@ -56,15 +76,15 @@ func withRecover(fn func()) {
 }
 
 func logResponse(resp response) {
-	log.Printf("[log] response: %v\n", resp)
+	log.Debugf("[log] response: %v\n", resp)
 }
 
 func logError(err error) {
-	log.Printf("[log] error: %v\n", err)
+	log.Debugf("[log] error: %v\n", err)
 }
 
-// clientStr is tcp client for talking with observer server.
-type clientStr struct {
+// ClientStr is tcp client for talking with observer server.
+type ClientStr struct {
 	conn    net.Conn
 	connErr error
 
@@ -111,21 +131,28 @@ type confStr struct {
 	keepAlive   time.Duration
 }
 
+func init() {
+	log.SetHandler(text.New(os.Stderr))
+}
+
 // Init should receive key for authentication to initialize the client.
+// - should use default host to connect
 // - should have buffer in case of reconnection to the server
 // - should handle situations when it can't send the traffic to server
-func Init(key string) *clientStr {
+func Init(key string) *ClientStr {
 	return newClient(key, defaultHost)
 }
 
-func InitWithHost(key string, host string) *clientStr {
+// InitWithHost should be acessible from library, for development
+// purporse we could use separare host to connect.
+//
+// TODO: define way to set debug level mode
+func InitWithHost(key string, host string) *ClientStr {
 	return newClient(key, host)
 }
 
-func newClient(key string, host string) *clientStr {
-	log.SetOutput(os.Stdout)
-
-	client := &clientStr{
+func newClient(key string, host string) *ClientStr {
+	client := &ClientStr{
 		conf: &confStr{
 			dialTimeout: 2 * time.Minute,
 			keepAlive:   5 * time.Minute,
@@ -180,7 +207,7 @@ func encode(attributes interface{}) (string, error) {
 }
 
 // Log should send log message directly to client depends on logging level.
-func (client *clientStr) Log(level int, message string) {
+func (client *ClientStr) Log(level int, message string) {
 	message, err := encode([]logStr{
 		{Level: level, Message: message},
 	})
@@ -192,7 +219,7 @@ func (client *clientStr) Log(level int, message string) {
 }
 
 // Var writes variables directly to server.
-func (client *clientStr) Var(typename string, name string, value string) {
+func (client *ClientStr) Var(typename string, name string, value string) {
 	message, err := encode([]varStr{
 		{Name: name, Type: typename, Value: value},
 	})
@@ -203,35 +230,35 @@ func (client *clientStr) Var(typename string, name string, value string) {
 	}
 }
 
-func (client *clientStr) isConnected() bool {
+func (client *ClientStr) isConnected() bool {
 	// TODO: we should have aliveness check by write/read message from server.
 	return true
 }
 
-func (client *clientStr) sendMessage(command string, message string) {
+func (client *ClientStr) sendMessage(command string, message string) {
 	if message == "" {
-		client.send(log.Sprintf("%s:%s\n", command, client.conf.key))
+		client.send(fmt.Sprintf("%s:%s\n", command, client.conf.key))
 	} else {
-		client.send(log.Sprintf("%s:%s:%s\n", command, client.conf.key, message))
+		client.send(fmt.Sprintf("%s:%s:%s\n", command, client.conf.key, message))
 	}
 }
 
-func (client *clientStr) send(message string) error {
+func (client *ClientStr) send(message string) error {
 	var err error
 
-	log.Printf("[client.send] begin write connection: %v, message: '%s'\n", client.conn, message)
+	log.Debugf("[client.send] begin write connection: %v, message: '%s'\n", client.conn, message)
 	_, err = client.conn.Write([]byte(message))
 	if err != nil {
 		client.errors <- errors.Wrap(err, "conn can't write message via socket")
 		return err
 	}
-	log.Printf("[client.send] done write message: '%s'\n", message)
+	log.Debugf("[client.send] done write message: '%s'\n", message)
 
 	responsesChan := make(chan response, 1)
 	errorsChan := make(chan error, 1)
 
 	go func() {
-		log.Printf("[client.send] begin running reader from tcp server message: '%s'\n", message)
+		log.Debugf("[client.send] begin running reader from tcp server message: '%s'\n", message)
 		buf := bufio.NewReader(client.conn)
 		for {
 			str, err := buf.ReadString('\n')
@@ -244,7 +271,7 @@ func (client *clientStr) send(message string) error {
 				break
 			}
 		}
-		log.Printf("[client.send] done running reader from tcp server message: '%s'\n", message)
+		log.Debugf("[client.send] done running reader from tcp server message: '%s'\n", message)
 	}()
 
 	select {
@@ -258,10 +285,13 @@ func (client *clientStr) send(message string) error {
 
 	return err
 }
+func (client *ClientStr) auth() {
+	client.sendMessage(verifyCommand, "")
+}
 
-func (client *clientStr) connect() {
+func (client *ClientStr) connect() {
 	if client.conn == nil {
-		log.Printf("[client.connect] begin connect to tcp server: '%s'\n", client.conf.host)
+		log.Debugf("[client.connect] begin connect to tcp server: '%s'\n", client.conf.host)
 		dialer := net.Dialer{
 			Timeout:   client.conf.dialTimeout,
 			KeepAlive: client.conf.keepAlive,
@@ -276,20 +306,34 @@ func (client *clientStr) connect() {
 			// - should have number of retries on connecting to host.
 			panic(client.connErr)
 		}
-		log.Printf("[client.connect] done connect to tcp server: '%s'\n", client.conf.host)
+		log.Debugf("[client.connect] done connect to tcp server: '%s'\n", client.conf.host)
 
-		log.Printf("[client.connect] begin auth: '%s'\n", client.conf.host)
+		log.Debugf("[client.connect] begin auth: '%s'\n", client.conf.host)
 		client.auth()
-		log.Printf("[client.connect] done auth: '%s'\n", client.conf.host)
+		log.Debugf("[client.connect] done auth: '%s'\n", client.conf.host)
 	}
 }
 
-func (client *clientStr) reconnect() {
-	// TODO:
-	// - should reconnect in case of no connection.
-	client.connect()
-}
+// We should always giving a try to reconnect to the server
+// otherwise we can loose the data.
+func (client *ClientStr) reconnect() {
+	err := retry.Do(
+		func() error {
+			client.connect()
 
-func (client *clientStr) auth() {
-	client.sendMessage(verifyCommand, "")
+			if !client.isConnected() {
+				return ErrConnection
+			}
+
+			return nil
+		},
+	)
+
+	if err != nil {
+		_, ok := err.(errConnection)
+		if ok {
+			<-time.After(err.(errConnection).RetryTime())
+			client.reconnect()
+		}
+	}
 }
