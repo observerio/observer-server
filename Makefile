@@ -1,30 +1,37 @@
 NAME = api
 DOCKER_PRIVATE_HOST=docker-registry.rubyforce.co:5000
+DOCKER_COMPOSE=pipenv exec docker-compose
+
+init:
+	(docker network create game-dev || true)
+	pip install --user pipenv
+	pipenv install
+.PHONY: init
 
 remove: stop
-	docker-compose rm --force
+	$(DOCKER_COMPOSE) rm --force
 .PHONY: remove
 
 build: stop
-	docker-compose up -d
+	$(DOCKER_COMPOSE) up -d
 .PHONY: build
 
 restart.api:
-	docker-compose restart api && docker-compose logs -f --tail=1 api
+	$(DOCKER_COMPOSE) restart api && $(DOCKER_COMPOSE) logs -f --tail=1 api
 .PHONY: restart.api
 
 restart.sim:
-	docker-compose restart simulate && docker-compose logs -f --tail=1 simulate
+	$(DOCKER_COMPOSE) restart simulate && $(DOCKER_COMPOSE) logs -f --tail=1 simulate
 .PHONY: restart.sim
 
 rebuild: remove build
 
 stop:
-	docker-compose stop
+	$(DOCKER_COMPOSE) stop
 .PHONY: stop
 
 test:
-	docker exec -ti `docker-compose ps -q $(NAME)` /bin/ash -c "mix test $(TEST_CASE)"
+	docker exec -ti `$(DOCKER_COMPOSE) ps -q $(NAME)` /bin/ash -c "mix test $(TEST_CASE)"
 .PHONY: test
 
 container.test:
@@ -32,7 +39,7 @@ container.test:
 .PHONY: container.test
 
 console:
-	docker exec -ti `docker-compose ps -q $(NAME)` /bin/ash
+	docker exec -ti `$(DOCKER_COMPOSE) ps -q $(NAME)` /bin/ash
 .PHONY: console
 
 server:
@@ -48,7 +55,7 @@ watch.server:
 .PHONY: watch.server
 
 watch.test:
-	docker-compose exec -ti `docker-compose ps -q $(NAME)` /bin/ash -c "watchman-make -p 'lib/**/*.ex' 'test/**/*.exs' 'config/*.exs' 'mix.exs' -t container.test"
+	$(DOCKER_COMPOSE) exec -ti `$(DOCKER_COMPOSE) ps -q $(NAME)` /bin/ash -c "watchman-make -p 'lib/**/*.ex' 'test/**/*.exs' 'config/*.exs' 'mix.exs' -t container.test"
 .PHONY: watch.test
 
 # should rebuild image with api erlang app inside and then push it to our
