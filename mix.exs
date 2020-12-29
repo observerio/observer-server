@@ -43,7 +43,8 @@ defmodule Web.Mixfile do
       {:dogma, "~> 0.1", only: [:dev, :test]},
       {:cors_plug, "~> 1.2"},
       {:mix_docker, "~> 0.5.0"},
-      {:poolboy, "~> 1.5"}
+      {:poolboy, "~> 1.5"},
+      {:plug_cowboy, "~> 1.0"}
     ]
   end
 end
