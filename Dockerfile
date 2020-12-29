@@ -1,18 +1,17 @@
 FROM elixir:1.11.2-alpine
 
-RUN echo '' > /etc/apk/repositories && \
-  echo 'http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
-  echo 'http://nl.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
-
 RUN apk update
 RUN apk add --force jq \
  && apk add --force putty \
  && apk add --force curl curl-dev \
  && apk add --force make \
- && apk add --force erlang-dev
+ && apk add --force erlang-dev \
+ && apk add --force git \
+ && apk add --force musl \
+ && apk add --force musl-dev \
+ && apk add --force gcc
 
-RUN apk add --force musl
-RUN apk add --force musl-dev
+RUN mix do local.hex --force, local.rebar --force
 
 # cleanup
 RUN rm -rf /var/cache/apk/*
