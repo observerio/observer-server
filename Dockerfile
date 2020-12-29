@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir:1.4.2
+FROM bitwalker/alpine-elixir:1.11.2
 
 RUN echo '' > /etc/apk/repositories && \
   echo 'http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
