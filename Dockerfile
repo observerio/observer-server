@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir:1.11.2
+FROM elixir:1.11.2-alpine
 
 RUN echo '' > /etc/apk/repositories && \
   echo 'http://nl.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
@@ -13,7 +13,6 @@ RUN apk add --force jq \
 
 RUN apk add --force musl
 RUN apk add --force musl-dev
-RUN apk add --force alpine-sdk
 
 # cleanup
 RUN rm -rf /var/cache/apk/*
