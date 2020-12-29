@@ -1,6 +1,6 @@
 NAME = api
 DOCKER_PRIVATE_HOST=docker-registry.rubyforce.co:5000
-DOCKER_COMPOSE=pipenv exec docker-compose
+DOCKER_COMPOSE=pipenv run docker-compose
 
 init:
 	(docker network create game-dev || true)
