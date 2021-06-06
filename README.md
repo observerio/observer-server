@@ -35,10 +35,10 @@ POST
 # Dev
 
 containers:
-  -[x] redis
-  -[x] elasticsearch
-  -[x] backend(tcp, web api)
-  -[x] test
-  -[] test.watch([https://github.com/lpil/mix-test.watch](https://github.com/lpil/mix-test.watch))
-  -[] demo tcp client(random produce data)
-  -[] frontend
+  - [x] redis
+  - [x] elasticsearch
+  - [x] backend(tcp, web api)
+  - [x] test
+  - [ ] test.watch([https://github.com/lpil/mix-test.watch](https://github.com/lpil/mix-test.watch))
+  - [ ] demo tcp client(random produce data)
+  - [ ] frontend
